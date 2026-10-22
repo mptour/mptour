@@ -8,7 +8,7 @@ import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import { chrome, htmlLang, notices, ogLocale, type Dictionary } from '../i18n';
 import { loadHeroImages, mobileHeroSrc } from '../lib/hero-image';
-import { absoluteUrl } from '../lib/paths';
+import { absoluteUrl, localeAlternates } from '../lib/paths';
 
 interface Props {
   locale: Locale;
@@ -21,7 +21,8 @@ interface Props {
 
 const { locale, dict, title, description, untranslated = false, preloadHero = false } = Astro.props;
 const heroImages = preloadHero ? await loadHeroImages() : undefined;
-const notice = locale === 'pt' ? undefined : notices[locale].text;
+const notice = untranslated && locale !== 'pt' ? notices[locale].text : undefined;
+const alternates = localeAlternates();
 const canonicalPath = Astro.url.pathname.includes('404')
   ? import.meta.env.BASE_URL
   : Astro.url.pathname;
@@ -83,12 +84,9 @@ const schema = {
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={image} />
-    {!untranslated && (
-      <>
-        <link rel="alternate" hreflang="pt-BR" href={home} />
-        <link rel="alternate" hreflang="x-default" href={home} />
-      </>
-    )}
+    {alternates.map((alternate) => (
+      <link rel="alternate" hreflang={alternate.hreflang} href={alternate.href} />
+    ))}
     <link rel="preload" href={fraunces} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={frauncesItalic} as="font" type="font/woff2" crossorigin />
     <link rel="preload" href={sans} as="font" type="font/woff2" crossorigin />

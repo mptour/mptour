@@ -53,12 +53,24 @@ const BANNED_IN_PT = [
   /entrega o mapa/i,
 ];
 
+const BANNED_IN_ES = [
+  /experiencia única/i,
+  /\bdescubra\b/i,
+  /inolvidable/i,
+  /\bmágic/i,
+  /imperdible/i,
+  /paraíso/i,
+  /\bexclusiv/i,
+  /déjese/i,
+  /catálogo/i,
+];
+
 describe('copy', () => {
-  it('marks every Portuguese string and leaves ES/EN marketing empty', () => {
+  it('marks every Portuguese and Spanish string and leaves EN marketing empty', () => {
     assertMarked(pt, 'pt');
+    assertMarked(es, 'es');
     assertMarked(chrome, 'chrome');
     assertMarked(notices, 'notices');
-    expect(es).toEqual({});
     expect(en).toEqual({});
   });
 
@@ -128,5 +140,60 @@ describe('copy', () => {
     expect(pt.regionMap.link.text).toBe('Olhe esse lugar');
     expect(prompt).not.toMatch(/ver território/i);
     expect(prompt).not.toMatch(/toque um ponto/i);
+  });
+
+  it('speaks to Argentine and Paraguayan visitors in the formal usted imperative', () => {
+    const copy = collectCopy(es).join('\n');
+    for (const pattern of BANNED_IN_ES) {
+      expect(copy, pattern.source).not.toMatch(pattern);
+    }
+    expect(es.plan.cta.text).toBe('Escríbanos por WhatsApp');
+    expect(es.hero.cta.text).toBe('Escríbanos por WhatsApp');
+    expect(es.nav.cta.text).toBe('Escríbanos por WhatsApp');
+    expect(es.regionMap.idleTitle.text).toBe('Elija un lugar.');
+    expect(es.regionMap.link.text).toBe('Mire este lugar');
+    expect(es.missing.link.text).toBe('Vuelva al inicio');
+    expect(es.meta.title.text).toBe('MPTour — paseos en Foz do Iguaçu');
+    expect(es.meta.description.text).toContain('Itaipú');
+    expect(copy).not.toMatch(/PLACEHOLDER/);
+    expect(copy).not.toMatch(/\bvocê\b/i);
+    expect(copy).not.toMatch(/\b(escribí|mirá|elegí|volvé|andá)\b/i);
+  });
+
+  it('keeps the Spanish guide facts and leaves duration flexible', () => {
+    expect(es.manifesto.facts.map((fact) => fact.text)).toEqual([
+      'Paseo privado',
+      'Guía que vive en Foz',
+      'Brasil, Argentina, Paraguay',
+    ]);
+    expect(es.experiences.lede.text).toContain('Medio día, día entero, varios días o a medida.');
+    expect(es.experiences.items.map((item) => item.duration.text)).toEqual([
+      'Como usted quiera',
+      'Como usted quiera',
+      'Como usted quiera',
+      'Como usted quiera',
+      'Como usted quiera',
+    ]);
+  });
+
+  it('translates map region names and keeps each label a prefix of the name', () => {
+    expect(es.regionMap.points.map((point) => point.name.text)).toEqual([
+      'Cataratas lado brasileño',
+      'Cataratas lado argentino',
+      'Itaipú',
+      'Paraguay (Ciudad del Este)',
+      'Hito de las Tres Fronteras',
+    ]);
+    expect(es.regionMap.points.map((point) => point.label.text)).toEqual([
+      'Cataratas',
+      'Cataratas',
+      'Itaipú',
+      'Paraguay',
+      'Hito',
+    ]);
+    expect(es.regionMap.countries.py.text).toBe('Paraguay');
+    for (const point of es.regionMap.points) {
+      expect(point.name.text.startsWith(point.label.text), point.name.text).toBe(true);
+    }
   });
 });

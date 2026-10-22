@@ -4,7 +4,12 @@ import { isCopy, type Dictionary } from './mark';
 import { es } from './es';
 import { pt } from './pt';
 
-const extras: Record<Exclude<Locale, 'pt'>, Partial<Dictionary>> = { es, en };
+/** Locales with their own copy. English still falls back to Portuguese. */
+const translated = new Set<Locale>(['pt', 'es']);
+
+export function isTranslated(locale: Locale): boolean {
+  return translated.has(locale);
+}
 
 function merge<T>(base: T, extra: unknown): T {
   if (extra === undefined) return base;
@@ -25,8 +30,10 @@ function merge<T>(base: T, extra: unknown): T {
 }
 
 export function t(locale: Locale): { dict: Dictionary; untranslated: boolean } {
-  if (locale === 'pt') return { dict: pt, untranslated: false };
-  return { dict: merge(pt, extras[locale]), untranslated: true };
+  const untranslated = !isTranslated(locale);
+  if (locale === 'pt') return { dict: pt, untranslated };
+  if (locale === 'es') return { dict: es, untranslated };
+  return { dict: merge(pt, en), untranslated };
 }
 
 export { chrome, htmlLang, notices, ogLocale } from './ui';

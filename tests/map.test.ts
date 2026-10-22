@@ -6,7 +6,7 @@ import { describe, expect, it } from 'vitest';
 const rootDir = path.resolve(new URL('..', import.meta.url).pathname);
 
 /** Acceptance: the home shows these five tours on an inline map, each with a card that links to its territory anchor. */
-const TOURS = [
+const TOURS_PT = [
   {
     image: 'falls-br',
     name: 'Cataratas lado brasileiro',
@@ -34,13 +34,46 @@ const TOURS = [
   },
 ] as const;
 
+const TOURS_ES = [
+  {
+    image: 'falls-br',
+    name: 'Cataratas lado brasileño',
+    anchor: 'cataratas-brasil',
+    card: 'mapa-cataratas-brasil',
+  },
+  {
+    image: 'falls-ar',
+    name: 'Cataratas lado argentino',
+    anchor: 'cataratas-argentina',
+    card: 'mapa-cataratas-argentina',
+  },
+  { image: 'itaipu', name: 'Itaipú', anchor: 'itaipu', card: 'mapa-itaipu' },
+  {
+    image: 'paraguay',
+    name: 'Paraguay (Ciudad del Este)',
+    anchor: 'paraguai',
+    card: 'mapa-paraguai',
+  },
+  {
+    image: 'frontier',
+    name: 'Hito de las Tres Fronteras',
+    anchor: 'tres-fronteiras',
+    card: 'mapa-tres-fronteiras',
+  },
+] as const;
+
 function readPage(outDir: string, page: string) {
   const file = path.join(rootDir, outDir, page);
   expect(existsSync(file), `${outDir}/${page} should exist`).toBe(true);
   return parse(readFileSync(file, 'utf8'));
 }
 
-function expectMap(outDir: string, page: string, homePath: string) {
+function expectMap(
+  outDir: string,
+  page: string,
+  homePath: string,
+  tours: typeof TOURS_PT | typeof TOURS_ES,
+) {
   const html = readPage(outDir, page);
   const source = html.toString();
   const territories = html.querySelector('[data-testid="territories"]');
@@ -61,8 +94,8 @@ function expectMap(outDir: string, page: string, homePath: string) {
 
   const pins = map?.querySelectorAll('[data-testid="map-pin"]') ?? [];
   const cards = map?.querySelectorAll('[data-testid="map-card"]') ?? [];
-  expect(pins).toHaveLength(TOURS.length);
-  expect(cards).toHaveLength(TOURS.length);
+  expect(pins).toHaveLength(tours.length);
+  expect(cards).toHaveLength(tours.length);
   expect(
     map?.querySelector('[aria-current]'),
     'selection is applied by script, not SSR',
@@ -70,7 +103,7 @@ function expectMap(outDir: string, page: string, homePath: string) {
   expect(map?.querySelector('.is-open')).toBeNull();
   expect(map?.text).not.toMatch(/PLACEHOLDER/);
 
-  for (const tour of TOURS) {
+  for (const tour of tours) {
     const pin = pins.find((node) => node.getAttribute('data-pin') === tour.image);
     expect(pin, tour.name).toBeTruthy();
     expect(pin?.tagName.toLowerCase()).toBe('a');
@@ -98,13 +131,17 @@ function expectMap(outDir: string, page: string, homePath: string) {
 
 describe('region map', () => {
   it('places an inline map of the five tours on the home, with a card link to each territory', () => {
-    expectMap('dist', 'index.html', '/');
+    expectMap('dist', 'index.html', '/', TOURS_PT);
   });
 
-  it('keeps the same map on the locale fallbacks and under the project-site base', () => {
-    expectMap('dist', 'es/index.html', '/es/');
-    expectMap('dist', 'en/index.html', '/en/');
-    expectMap('dist-base', 'index.html', '/mptour/');
-    expectMap('dist-base', 'es/index.html', '/mptour/es/');
+  it('keeps the Portuguese names on the English fallback and under the project-site base', () => {
+    expectMap('dist', 'en/index.html', '/en/', TOURS_PT);
+    expectMap('dist-base', 'index.html', '/mptour/', TOURS_PT);
+    expectMap('dist-base', 'en/index.html', '/mptour/en/', TOURS_PT);
+  });
+
+  it('translates the Spanish map names and keeps the same anchors', () => {
+    expectMap('dist', 'es/index.html', '/es/', TOURS_ES);
+    expectMap('dist-base', 'es/index.html', '/mptour/es/', TOURS_ES);
   });
 });
