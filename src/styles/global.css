@@ -347,7 +347,6 @@ a {
 }
 
 .hero-clip {
-  z-index: 1;
   object-position: center 42%;
   opacity: 0;
   pointer-events: none;
