@@ -18,7 +18,7 @@ export function absoluteUrl(pathname = import.meta.env.BASE_URL): string {
   return new URL(pathname, site).href;
 }
 
-/** Home-cluster alternates. Every page points at the same three locales. */
+/** Home-cluster alternates. Only the three homes advertise every locale. */
 export function localeAlternates(): { hreflang: string; href: string }[] {
   const home = absoluteUrl(localeHref('pt'));
   return [
@@ -27,4 +27,16 @@ export function localeAlternates(): { hreflang: string; href: string }[] {
     { hreflang: htmlLang.en, href: absoluteUrl(localeHref('en')) },
     { hreflang: 'x-default', href: home },
   ];
+}
+
+/**
+ * Credits exist only in Portuguese. The missing page has no language alternate.
+ * Every other page is one of the three homes.
+ */
+export function alternatesFor(pathname: string): { hreflang: string; href: string }[] {
+  if (pathname.includes('404')) return [];
+  if (pathname.includes('/creditos')) {
+    return [{ hreflang: htmlLang.pt, href: absoluteUrl(pathname) }];
+  }
+  return localeAlternates();
 }

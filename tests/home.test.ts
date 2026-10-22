@@ -19,9 +19,9 @@ describe('home', () => {
 
     const cta = heroes[0]?.querySelector('[data-testid="cta-primary"]');
     expect(cta?.text.trim()).toBe('Chame no WhatsApp');
-    expect(cta?.getAttribute('href')).toBe('#monte-seu-roteiro');
+    expect(cta?.getAttribute('href')).toBe('#plan');
 
-    const plan = root.querySelector('#monte-seu-roteiro');
+    const plan = root.querySelector('#plan');
     const whatsapp = plan?.querySelector('[data-testid="cta-whatsapp"]');
     const href = whatsapp?.getAttribute('href') ?? '';
     const url = new URL(href);

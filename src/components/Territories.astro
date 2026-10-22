@@ -31,7 +31,7 @@ const areas = ['t-br', 't-ar', 't-itaipu', 't-py', 't-tri'];
         <a
           id={tourAnchors[item.image]}
           class:list={['tile', areas[index]]}
-          href="#monte-seu-roteiro"
+          href="#plan"
           data-testid="territory"
           data-reveal
           style={`--d:${index};--focal:${focal.tile[item.image]}`}
@@ -39,7 +39,7 @@ const areas = ['t-br', 't-ar', 't-itaipu', 't-py', 't-tri'];
           <figure>
             <Media
               src={still.src}
-              alt={still.alt}
+              alt={still.alt[locale]}
               widths={[480, 900, 1400]}
               sizes="(min-width: 860px) 45vw, 100vw"
             />

@@ -1,5 +1,6 @@
 import { getImage } from 'astro:assets';
 import { stills } from '../assets/media';
+import type { Locale } from '../config/whatsapp';
 
 /**
  * Full-bleed hero. 750w is the Lighthouse mobile slot (412 CSS px × 1.75).
@@ -14,7 +15,7 @@ const MOBILE_DPR = 1.75;
 
 type HeroImage = Awaited<ReturnType<typeof getImage>>;
 
-export async function loadHeroImages() {
+export async function loadHeroImages(locale: Locale) {
   const shared = {
     src: stills.hero.src,
     widths: [...HERO_WIDTHS],
@@ -31,7 +32,7 @@ export async function loadHeroImages() {
     webp,
     jpeg,
     sizes: HERO_SIZES,
-    alt: stills.hero.alt,
+    alt: stills.hero.alt[locale],
   };
 }
 

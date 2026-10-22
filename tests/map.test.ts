@@ -37,7 +37,7 @@ const TOURS_PT = [
 const TOURS_ES = [
   {
     image: 'falls-br',
-    name: 'Cataratas lado brasileño',
+    name: 'Cataratas del lado brasileño',
     anchor: 'cataratas-brasil',
     card: 'mapa-cataratas-brasil',
   },

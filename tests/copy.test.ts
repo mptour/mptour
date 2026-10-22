@@ -166,6 +166,9 @@ describe('copy', () => {
       'Guía que vive en Foz',
       'Brasil, Argentina, Paraguay',
     ]);
+    expect(es.territories.items.find((item) => item.image === 'itaipu')?.text.text).toBe(
+      'La represa ocupa toda la vista. El Paraná corre ancho, ahí abajo.',
+    );
     expect(es.experiences.lede.text).toContain('Medio día, día entero, varios días o a medida.');
     expect(es.experiences.items.map((item) => item.duration.text)).toEqual([
       'Como usted quiera',
@@ -178,7 +181,7 @@ describe('copy', () => {
 
   it('translates map region names and keeps each label a prefix of the name', () => {
     expect(es.regionMap.points.map((point) => point.name.text)).toEqual([
-      'Cataratas lado brasileño',
+      'Cataratas del lado brasileño',
       'Cataratas lado argentino',
       'Itaipú',
       'Paraguay (Ciudad del Este)',

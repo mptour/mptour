@@ -1,13 +1,15 @@
 ---
+import type { Locale } from '../config/whatsapp';
 import type { Dictionary } from '../i18n';
 import { focal, stills } from '../assets/media';
 import Media from './Media.astro';
 
 interface Props {
+  locale: Locale;
   dict: Dictionary;
 }
 
-const { dict } = Astro.props;
+const { locale, dict } = Astro.props;
 ---
 
 <section class="section" id="experiencias" data-testid="experiences">
@@ -25,7 +27,7 @@ const { dict } = Astro.props;
       return (
         <a
           class="card"
-          href="#monte-seu-roteiro"
+          href="#plan"
           data-testid="experience"
           data-reveal
           data-wide={wide ? '' : undefined}
@@ -34,7 +36,7 @@ const { dict } = Astro.props;
           <div class="media">
             <Media
               src={still.src}
-              alt={still.alt}
+              alt={still.alt[locale]}
               widths={[480, 800, 1100]}
               sizes={wide ? '(min-width: 860px) 58vw, 100vw' : '(min-width: 860px) 33vw, 100vw'}
             />
