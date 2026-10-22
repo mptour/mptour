@@ -1,5 +1,4 @@
 ---
-import { IMAGE_CREDITS } from '../assets/credits';
 import { WHATSAPP_DISPLAY, whatsappHref, type Locale } from '../config/whatsapp';
 import type { Dictionary } from '../i18n';
 import { localeHref } from '../lib/paths';
@@ -8,10 +7,13 @@ import LocaleSwitch from './LocaleSwitch.astro';
 interface Props {
   dict: Dictionary;
   locale: Locale;
+  untranslated?: boolean;
 }
 
-const { dict, locale } = Astro.props;
+const { dict, locale, untranslated = false } = Astro.props;
 const year = new Date().getFullYear();
+const creditsHref = `${import.meta.env.BASE_URL}creditos/`;
+const copyLang = untranslated ? 'pt-BR' : undefined;
 ---
 
 <footer class="footer" data-testid="footer">
@@ -20,7 +22,7 @@ const year = new Date().getFullYear();
       <a class="logo" href={localeHref(locale)}>
         MPTour
       </a>
-      <p>{dict.footer.place.text}</p>
+      <p lang={copyLang}>{dict.footer.place.text}</p>
     </div>
     <div>
       <a class="phone" href={whatsappHref(locale)} target="_blank" rel="noopener noreferrer">
@@ -29,15 +31,11 @@ const year = new Date().getFullYear();
       <LocaleSwitch locale={locale} />
     </div>
   </div>
-  <p>{dict.footer.legal.text}</p>
+  <p lang={copyLang}>{dict.footer.legal.text}</p>
+  <p>
+    <a class="credits-link" data-testid="credits-link" href={creditsHref} lang={copyLang}>
+      {dict.footer.credits.text}
+    </a>
+  </p>
   <p>© {year} MPTour</p>
-  <ul class="credits">
-    {IMAGE_CREDITS.map((credit) => (
-      <li>
-        <a href={credit.href}>{credit.author}</a>
-        {' · '}
-        {credit.license}
-      </li>
-    ))}
-  </ul>
 </footer>

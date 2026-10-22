@@ -2,7 +2,7 @@ import { ph, type Dictionary } from './mark';
 
 export const pt = {
   meta: {
-    title: ph('MPTour — PLACEHOLDER · Foz do Iguaçu'),
+    title: ph('MPTour — Foz do Iguaçu'),
     description: ph(
       'PLACEHOLDER. Roteiros privativos em Foz do Iguaçu: Cataratas do Iguaçu no Brasil e na Argentina, Itaipu, Paraguai e Três Fronteiras.',
     ),
@@ -78,31 +78,31 @@ export const pt = {
         title: ph('San Martín, devagar'),
         territory: ph('Cataratas · Argentina'),
         duration: ph('Dia inteiro'),
-        image: 'falls-ar',
+        image: 'exp-san-martin',
       },
       {
         title: ph('A passarela brasileira'),
         territory: ph('Cataratas · Brasil'),
         duration: ph('Meio dia'),
-        image: 'falls-br',
+        image: 'exp-walkway',
       },
       {
         title: ph('A escala de Itaipu'),
         territory: ph('Itaipu'),
         duration: ph('Meio dia'),
-        image: 'itaipu',
+        image: 'exp-itaipu',
       },
       {
         title: ph('O rio entre as cidades'),
         territory: ph('Paraguai'),
         duration: ph('Meio dia'),
-        image: 'paraguay',
+        image: 'exp-bridge',
       },
       {
         title: ph('A cortina de água'),
         territory: ph('Cataratas'),
         duration: ph('Dois dias'),
-        image: 'falls-wide',
+        image: 'exp-curtain',
       },
     ],
   },
@@ -134,6 +134,11 @@ export const pt = {
   footer: {
     place: ph('Foz do Iguaçu · Paraná · Brasil'),
     legal: ph('Textos e fotografias são PLACEHOLDER. O número acima é o canal oficial.'),
+    credits: ph('Créditos'),
+  },
+  credits: {
+    title: ph('Créditos'),
+    lede: ph('Fotografias provisórias. O autor e a licença de cada arquivo estão abaixo.'),
   },
   missing: {
     kicker: ph('404'),

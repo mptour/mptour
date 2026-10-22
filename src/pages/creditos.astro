@@ -1,0 +1,38 @@
+---
+import { IMAGE_CREDITS } from '../assets/credits';
+import { t } from '../i18n';
+import { localeHref } from '../lib/paths';
+import Base from '../layouts/Base.astro';
+
+const locale = 'pt' as const;
+const { dict, untranslated } = t(locale);
+---
+
+<Base
+  locale={locale}
+  dict={dict}
+  title={dict.credits.title.text}
+  description={dict.credits.lede.text}
+  untranslated={untranslated}
+>
+  <main id="main" class="credits-page">
+    <p class="kicker">{dict.footer.credits.text}</p>
+    <h1>{dict.credits.title.text}</h1>
+    <p class="lede">{dict.credits.lede.text}</p>
+    <p>{dict.footer.legal.text}</p>
+    <ul>
+      {IMAGE_CREDITS.map((credit) => (
+        <li>
+          <a href={credit.href}>{credit.subject}</a>
+          {' · '}
+          {credit.author}
+          {' · '}
+          {credit.license}
+        </li>
+      ))}
+    </ul>
+    <a class="btn" href={localeHref(locale)}>
+      {dict.missing.link.text}
+    </a>
+  </main>
+</Base>

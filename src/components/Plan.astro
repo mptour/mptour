@@ -1,6 +1,6 @@
 ---
 import { whatsappHref, type Locale } from '../config/whatsapp';
-import type { Dictionary } from '../i18n';
+import { chrome, htmlLang, type Dictionary } from '../i18n';
 
 interface Props {
   dict: Dictionary;
@@ -26,7 +26,10 @@ const { dict, locale } = Astro.props;
       <span class="btn-ext" aria-hidden="true">
         ↗
       </span>
-      <span class="sr-only"> WhatsApp, abre em nova aba</span>
+      <span class="sr-only" lang={htmlLang[locale]}>
+        {' '}
+        {chrome[locale].newTab.text}
+      </span>
     </a>
     <p class="note">{dict.plan.note.text}</p>
   </div>

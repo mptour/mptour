@@ -2,7 +2,7 @@
 import type { Locale } from '../config/whatsapp';
 import type { Dictionary } from '../i18n';
 import { chrome } from '../i18n';
-import { localeHref } from '../lib/paths';
+import { localeHref, sectionHref } from '../lib/paths';
 import LocaleSwitch from './LocaleSwitch.astro';
 
 interface Props {
@@ -12,9 +12,9 @@ interface Props {
 
 const { locale, dict } = Astro.props;
 const links = [
-  { href: '#territorios', label: dict.nav.territories.text },
-  { href: '#experiencias', label: dict.nav.experiences.text },
-  { href: '#como-funciona', label: dict.nav.method.text },
+  { href: sectionHref(locale, 'territorios'), label: dict.nav.territories.text },
+  { href: sectionHref(locale, 'experiencias'), label: dict.nav.experiences.text },
+  { href: sectionHref(locale, 'como-funciona'), label: dict.nav.method.text },
 ];
 ---
 
@@ -40,7 +40,7 @@ const links = [
       </a>
     ))}
     <LocaleSwitch locale={locale} />
-    <a class="header-cta" href="#monte-seu-roteiro">
+    <a class="header-cta" href={sectionHref(locale, 'monte-seu-roteiro')}>
       {dict.nav.cta.text}
     </a>
   </nav>

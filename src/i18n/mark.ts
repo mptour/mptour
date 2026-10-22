@@ -30,7 +30,7 @@ export interface Experience {
   title: Copy;
   territory: Copy;
   duration: Copy;
-  image: 'falls-ar' | 'falls-br' | 'itaipu' | 'paraguay' | 'frontier' | 'falls-wide';
+  image: 'exp-san-martin' | 'exp-walkway' | 'exp-itaipu' | 'exp-bridge' | 'exp-curtain';
 }
 
 export interface Dictionary {
@@ -53,6 +53,7 @@ export interface Dictionary {
     steps: { title: Copy; text: Copy }[];
   };
   plan: { kicker: Copy; title: Copy; text: Copy; cta: Copy; note: Copy };
-  footer: { place: Copy; legal: Copy };
+  footer: { place: Copy; legal: Copy; credits: Copy };
+  credits: { title: Copy; lede: Copy };
   missing: { kicker: Copy; title: Copy; text: Copy; link: Copy };
 }

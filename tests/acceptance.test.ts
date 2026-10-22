@@ -38,9 +38,25 @@ describe('placeholders, i18n and base path', () => {
     const page = readPage('dist', 'index.html');
     const html = page.toString();
 
-    expect(page.querySelector('[data-testid="placeholder-ribbon"]')?.text).toMatch(/PLACEHOLDER/);
+    expect(page.querySelector('[data-testid="placeholder-ribbon"]')).toBeNull();
+    expect(page.querySelector('title')?.text).not.toMatch(/PLACEHOLDER/);
     expect(page.querySelector('meta[name="description"]')?.getAttribute('content')).toMatch(
       /PLACEHOLDER/,
+    );
+    expect(page.querySelector('[data-testid="footer"]')?.text).toMatch(/PLACEHOLDER/);
+    for (const node of page.querySelectorAll(
+      '[data-testid="experience"], [data-testid="territory"]',
+    )) {
+      expect(node.text).not.toMatch(/PLACEHOLDER/);
+    }
+    expect(page.querySelectorAll('.nav-link').map((node) => node.getAttribute('href'))).toEqual([
+      '/#territorios',
+      '/#experiencias',
+      '/#como-funciona',
+    ]);
+    expect(page.querySelector('.header-cta')?.getAttribute('href')).toBe('/#monte-seu-roteiro');
+    expect(page.querySelector('[data-testid="credits-link"]')?.getAttribute('href')).toBe(
+      '/creditos/',
     );
     expect(page.querySelector('meta[property="og:title"]')).toBeTruthy();
     expect(page.querySelector('meta[property="og:image"]')).toBeTruthy();
@@ -82,10 +98,22 @@ describe('placeholders, i18n and base path', () => {
     for (const locale of ['es', 'en'] as const) {
       const page = readPage('dist', `${locale}/index.html`);
       expect(page.querySelector('html')?.getAttribute('lang')).toBe(locale);
+      expect(page.querySelector('#main')?.getAttribute('lang')).toBe('pt-BR');
       expect(page.querySelector('[data-testid="fallback-notice"]')).toBeTruthy();
       expect(page.querySelector('meta[name="robots"]')?.getAttribute('content')).toMatch(/noindex/);
       const href = page.querySelector('[data-testid="cta-whatsapp"]')?.getAttribute('href') ?? '';
       expect(new URL(href).searchParams.get('text')).toBe(WHATSAPP_MESSAGE[locale]);
+      const newTab = page.querySelector('[data-testid="cta-whatsapp"] .sr-only')?.text ?? '';
+      expect(newTab).toBe(
+        locale === 'es'
+          ? ' WhatsApp, se abre en una pestaña nueva'
+          : ' WhatsApp, opens in a new tab',
+      );
+      expect(page.querySelectorAll('.nav-link').map((node) => node.getAttribute('href'))).toEqual([
+        `/${locale}/#territorios`,
+        `/${locale}/#experiencias`,
+        `/${locale}/#como-funciona`,
+      ]);
     }
 
     const home = readPage('dist', 'index.html');
@@ -112,6 +140,14 @@ describe('placeholders, i18n and base path', () => {
     const basedPage = parse(based);
     expect(basedPage.querySelector('[data-testid="cta-primary"]')?.getAttribute('href')).toBe(
       '#monte-seu-roteiro',
+    );
+    expect(basedPage.querySelector('.nav-link')?.getAttribute('href')).toBe('/mptour/#territorios');
+    expect(basedPage.querySelector('[data-testid="credits-link"]')?.getAttribute('href')).toBe(
+      '/mptour/creditos/',
+    );
+    const basedEs = readPage('dist-base', 'es/index.html');
+    expect(basedEs.querySelector('.nav-link')?.getAttribute('href')).toBe(
+      '/mptour/es/#territorios',
     );
     expect(basedPage.querySelector('[data-testid="locale-es"]')?.getAttribute('href')).toBe(
       '/mptour/es/',
@@ -145,6 +181,30 @@ describe('placeholders, i18n and base path', () => {
       if (source.includes(WHATSAPP_E164) && !allowed.has(relative)) offenders.push(relative);
     }
     expect(offenders).toEqual([]);
+  });
+
+  it('never canonicalizes the missing page and keeps internal routes real', () => {
+    const missing = readPage('dist', '404.html');
+    const canonical = missing.querySelector('link[rel="canonical"]')?.getAttribute('href') ?? '';
+    expect(canonical).toBe('https://mptour.github.io/');
+    expect(canonical).not.toContain('404');
+
+    const basedMissing = readPage('dist-base', '404.html');
+    const basedCanonical =
+      basedMissing.querySelector('link[rel="canonical"]')?.getAttribute('href') ?? '';
+    expect(basedCanonical).toBe('https://mptour.github.io/mptour/');
+    expect(basedCanonical).not.toContain('404');
+
+    const home = readFileSync(path.join(rootDir, 'dist/index.html'), 'utf8');
+    const known = new Set(['/', '/es/', '/en/', '/creditos/']);
+    const hrefs = [...home.matchAll(/href="([^"]*)"/g)].map((match) => match[1] ?? '');
+    for (const href of hrefs) {
+      if (!href.startsWith('/') || href.startsWith('//')) continue;
+      const pathOnly = href.split('#')[0] ?? '';
+      if (/\.[a-z0-9]+$/i.test(pathOnly)) continue;
+      expect(pathOnly.endsWith('/'), href).toBe(true);
+      expect(known.has(pathOnly), href).toBe(true);
+    }
   });
 
   it('ships reduced-motion CSS', () => {

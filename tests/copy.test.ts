@@ -2,7 +2,18 @@ import { describe, expect, it } from 'vitest';
 import { chrome, en, es, notices, pt } from '../src/i18n';
 import { isCopy } from '../src/i18n/mark';
 
-const imageIds = new Set(['falls-br', 'falls-ar', 'falls-wide', 'itaipu', 'paraguay', 'frontier']);
+const imageIds = new Set([
+  'falls-br',
+  'falls-ar',
+  'itaipu',
+  'paraguay',
+  'frontier',
+  'exp-san-martin',
+  'exp-walkway',
+  'exp-itaipu',
+  'exp-bridge',
+  'exp-curtain',
+]);
 
 function assertMarked(value: unknown, path: string) {
   if (typeof value === 'string') {

@@ -91,7 +91,7 @@ function stripComments(source: string) {
 
 /** Top-level rules only. Media queries are checked separately when named. */
 function withoutAtBlocks(source: string) {
-  let text = stripComments(source);
+  const text = stripComments(source);
   let out = '';
   for (let i = 0; i < text.length; i += 1) {
     if (text.startsWith('@media', i) || text.startsWith('@keyframes', i)) {
@@ -154,9 +154,13 @@ function painted(selector: string, source = withoutAtBlocks(css)) {
   };
 }
 
+function mustColor(color: Rgba | null, name: string): Rgba {
+  if (!color) throw new Error(`${name} is missing`);
+  return color;
+}
+
 const body = painted('body');
-const paper = body.background ?? resolveColor(vars['--paper']);
-if (!paper) throw new Error('body background missing');
+const paper = mustColor(body.background ?? resolveColor(vars['--paper']), 'body background');
 
 function backdrop(chain: string[], source?: string): Rgba {
   let bg = paper;
@@ -224,15 +228,18 @@ describe('home contrast', () => {
     const footerDraft =
       painted('.footer .locales a[data-draft]').color ?? draft.color ?? ink('.footer', openInk);
     pair('draft locale in the footer', footerDraft, footerBg);
-    pair('footer credits', ink('.credits', ink('.footer', openInk)), footerBg);
+    pair('footer credits link', ink('.credits-link', ink('.footer', openInk)), footerBg);
   });
 
-  it('meets AA on paper, forest, and the fixed stamp', () => {
+  it('meets AA on paper, forest, and the hero plate over white', () => {
     pair('body text', ink('body', paper), paper);
     pair('kicker', ink('.kicker', ink('body', paper)), paper);
     pair('card meta', ink('.card .meta', ink('.kicker', paper)), paper);
     pair('plan kicker', ink('.plan .kicker', ink('.plan', paper)), backdrop(['.plan']));
     pair('plan note', ink('.plan .note', ink('.plan', paper)), backdrop(['.plan']));
-    pair('stamp', ink('.stamp', paper), backdrop(['.stamp']));
+
+    const cream = mustColor(resolveColor(vars['--cream']), 'cream');
+    const plate = mustColor(resolveColor(vars['--plate']), 'plate');
+    pair('hero cream on the plate over white', cream, flatten(plate));
   });
 });
