@@ -86,7 +86,7 @@ const EN_TOURS = [
   },
   {
     image: 'frontier',
-    name: 'Mark of the Three Borders',
+    name: 'Triple Frontier Landmark',
     anchor: 'tres-fronteiras',
     card: 'mapa-tres-fronteiras',
   },
