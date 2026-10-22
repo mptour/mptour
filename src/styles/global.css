@@ -57,6 +57,9 @@
   --cream: #f4efe6;
   --sand: #d9cdb9;
   --stone: #b8b2a6;
+  --land-br: #dfe4d6;
+  --land-ar: #e6d9c2;
+  --land-py: #e0dbd0;
   --mist-text: #e8e2d6;
   --line: rgba(18, 27, 22, 0.18);
   --line-dark: rgba(244, 239, 230, 0.28);
@@ -553,6 +556,11 @@ a {
   max-width: none;
   min-height: min(100vh, 1040px);
   margin-inline: calc(-1 * var(--gutter));
+  /* Skip the offscreen mosaic until it is near the viewport. Otherwise the
+     five lazy tiles are requested before first paint and Lighthouse's
+     simulated mobile LCP treats them as render-blocking. */
+  content-visibility: auto;
+  contain-intrinsic-size: auto 1040px;
 }
 
 .t-br {
@@ -987,7 +995,8 @@ a {
   .btn,
   .card h3::after,
   .nav,
-  .menu-btn span {
+  .menu-btn span,
+  .map-dot {
     animation: none;
     transition: none;
     opacity: 1;
@@ -1161,6 +1170,7 @@ a {
     display: flex;
     flex-direction: column;
     min-height: 0;
+    contain-intrinsic-size: auto calc(360vw + 2rem);
   }
 
   .tile {
@@ -1206,5 +1216,277 @@ a {
 
   .hero-still {
     object-position: center 28%;
+  }
+}
+
+.region-map {
+  max-width: var(--container);
+  margin: 0 auto clamp(3rem, 6vw, 5rem);
+}
+
+.region-layout {
+  display: block;
+}
+
+.map-stage {
+  position: relative;
+  width: min(100%, 28rem);
+  margin-inline: auto;
+  background-color: var(--land-br);
+}
+
+.map-stage svg {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.map-country {
+  position: absolute;
+  z-index: 1;
+  left: calc(var(--x) * 1%);
+  top: calc(var(--y) * 1%);
+  margin: 0;
+  color: var(--muted);
+  background-color: var(--land-py);
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: clamp(1rem, 2.2vw, 1.25rem);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  pointer-events: none;
+}
+
+.map-country[data-align='end'] {
+  translate: -100% 0;
+}
+
+.map-country[data-land='br'] {
+  color: var(--muted);
+  background-color: var(--land-br);
+}
+
+.map-country[data-land='ar'] {
+  color: var(--muted);
+  background-color: var(--land-ar);
+}
+
+.map-country[data-land='py'] {
+  color: var(--muted);
+  background-color: var(--land-py);
+}
+
+.map-pins {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.map-pins li {
+  margin: 0;
+  padding: 0;
+}
+
+.map-pin {
+  position: absolute;
+  left: calc(var(--x) * 1%);
+  top: calc(var(--y) * 1%);
+  translate: -50% -50%;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  color: inherit;
+  text-decoration: none;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.map-dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  background-color: var(--forest);
+  box-shadow: 0 0 0 2px var(--paper);
+  transition:
+    scale 0.4s var(--ease),
+    width 0.4s var(--ease),
+    height 0.4s var(--ease),
+    background-color 0.4s var(--ease),
+    box-shadow 0.4s var(--ease);
+}
+
+.map-pin[aria-current='true'] .map-dot {
+  width: 0.875rem;
+  height: 0.875rem;
+  background-color: var(--clay);
+  box-shadow:
+    0 0 0 2px var(--paper),
+    0 0 0 5px var(--clay);
+}
+
+.map-label {
+  position: absolute;
+  z-index: 1;
+  padding: 0.12rem 0.22rem;
+  color: var(--moss);
+  background-color: var(--land-py);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.map-pin[data-land='br'] .map-label {
+  color: var(--moss);
+  background-color: var(--land-br);
+}
+
+.map-pin[data-land='ar'] .map-label {
+  color: var(--moss);
+  background-color: var(--land-ar);
+}
+
+.map-pin[data-land='py'] .map-label {
+  color: var(--moss);
+  background-color: var(--land-py);
+}
+
+.map-pin[aria-current='true'] .map-label {
+  color: var(--clay);
+}
+
+.map-pin[data-side='end'] .map-label {
+  left: calc(100% - 0.85rem);
+  top: 50%;
+  translate: 0 -50%;
+}
+
+.map-pin[data-side='start'] .map-label {
+  right: calc(100% - 0.85rem);
+  top: 50%;
+  translate: 0 -50%;
+}
+
+.map-pin[data-side='top'] .map-label {
+  left: 50%;
+  bottom: calc(100% - 0.7rem);
+  translate: -50% 0;
+}
+
+.map-pin[data-side='bottom'] .map-label {
+  left: 50%;
+  top: calc(100% - 0.7rem);
+  translate: -50% 0;
+}
+
+.map-panel {
+  margin-top: 1.25rem;
+  min-height: 11rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+  background-color: var(--paper);
+  color: var(--ink);
+}
+
+.map-panel .meta {
+  margin: 0;
+  color: var(--moss);
+}
+
+.map-card h3,
+.map-idle h3 {
+  margin: 0.35rem 0 0;
+  color: var(--ink);
+  font-family: var(--serif);
+  font-weight: 300;
+  font-size: clamp(1.5rem, 0.6rem + 1.6vw, 2rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+
+.map-card h3::after,
+.map-idle h3::after {
+  content: '';
+  display: block;
+  width: 2.4rem;
+  height: 1px;
+  margin-top: 0.8rem;
+  background-color: var(--clay);
+}
+
+.map-copy {
+  margin: 0.85rem 0 0;
+  max-width: 28rem;
+  color: var(--ink);
+}
+
+.map-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  margin-top: 0.35rem;
+  color: var(--ink);
+}
+
+.has-js .map-card:not(.is-open) {
+  display: none;
+}
+
+.has-js [data-region-map][data-open] .map-idle {
+  display: none;
+}
+
+html:not(.has-js) .map-idle {
+  display: none;
+}
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .map-pin:hover .map-dot,
+  .map-pin:focus-visible .map-dot {
+    scale: 1.15;
+  }
+}
+
+@media (max-width: 479px) {
+  .map-pin:not([aria-current='true']) .map-label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+}
+
+@media (min-width: 640px) {
+  .region-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 36rem) minmax(15rem, 22rem);
+    column-gap: clamp(2rem, 4vw, 4rem);
+    align-items: start;
+    justify-content: start;
+  }
+
+  .map-stage {
+    width: 100%;
+    margin-inline: 0;
+  }
+
+  .map-panel {
+    min-height: 14rem;
+    margin-top: 0;
   }
 }

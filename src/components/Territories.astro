@@ -1,13 +1,17 @@
 ---
+import type { Locale } from '../config/whatsapp';
 import type { Dictionary } from '../i18n';
 import { focal, stills } from '../assets/media';
+import { tourAnchors } from '../data/region-map';
 import Media from './Media.astro';
+import RegionMap from './RegionMap.astro';
 
 interface Props {
+  locale: Locale;
   dict: Dictionary;
 }
 
-const { dict } = Astro.props;
+const { locale, dict } = Astro.props;
 const areas = ['t-br', 't-ar', 't-itaipu', 't-py', 't-tri'];
 ---
 
@@ -19,11 +23,13 @@ const areas = ['t-br', 't-ar', 't-itaipu', 't-py', 't-tri'];
     </div>
     <p>{dict.territories.lede.text}</p>
   </div>
+  <RegionMap locale={locale} dict={dict} />
   <div class="mosaic">
     {dict.territories.items.map((item, index) => {
       const still = stills[item.image];
       return (
         <a
+          id={tourAnchors[item.image]}
           class:list={['tile', areas[index]]}
           href="#monte-seu-roteiro"
           data-testid="territory"

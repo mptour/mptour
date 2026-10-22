@@ -20,7 +20,7 @@ const { locale, dict, untranslated = false } = Astro.props;
 <main id="main" lang={untranslated ? 'pt-BR' : undefined}>
   <Hero dict={dict} />
   <Manifesto dict={dict} />
-  <Territories dict={dict} />
+  <Territories locale={locale} dict={dict} />
   <Experiences dict={dict} />
   <Method dict={dict} />
   <Plan dict={dict} locale={locale} />

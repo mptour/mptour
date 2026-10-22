@@ -1,0 +1,163 @@
+---
+import type { Locale } from '../config/whatsapp';
+import { cardId, countryLabels, MAP_VIEWBOX, mapPoints, tourAnchors } from '../data/region-map';
+import type { Dictionary } from '../i18n';
+import { sectionHref } from '../lib/paths';
+
+interface Props {
+  locale: Locale;
+  dict: Dictionary;
+}
+
+const { locale, dict } = Astro.props;
+
+const points = mapPoints.map((pin) => {
+  const copy = dict.regionMap.points.find((item) => item.image === pin.image);
+  const territory = dict.territories.items.find((item) => item.image === pin.image);
+  if (!copy || !territory) throw new Error(`Map point ${pin.image} has no copy`);
+  if (!copy.name.text.startsWith(copy.label.text)) {
+    throw new Error(`Map label for ${pin.image} must be a prefix of the tour name`);
+  }
+  return {
+    pin,
+    copy,
+    territory,
+    rest: copy.name.text.slice(copy.label.text.length),
+    card: cardId(pin.image),
+    href: sectionHref(locale, tourAnchors[pin.image]),
+  };
+});
+
+const countries = countryLabels.map((item) => ({
+  ...item,
+  name: dict.regionMap.countries[item.land].text,
+}));
+---
+
+<div
+  id="mapa"
+  class="region-map"
+  data-region-map
+  data-testid="region-map"
+  data-reveal
+  aria-labelledby="mapa-title"
+>
+  <h3 id="mapa-title" class="sr-only">
+    {dict.regionMap.title.text}
+  </h3>
+  <div class="region-layout">
+    <div class="map-stage" style={`aspect-ratio: ${MAP_VIEWBOX.width} / ${MAP_VIEWBOX.height}`}>
+      <svg
+        viewBox={`0 0 ${MAP_VIEWBOX.width} ${MAP_VIEWBOX.height}`}
+        aria-hidden="true"
+        focusable="false"
+      >
+        <rect width="1000" height="1000" fill="var(--land-br)"></rect>
+        <path
+          fill="var(--land-py)"
+          d="M0 0h340c-28 90-70 150-28 230 36 70-40 150-8 250-28 150-40 280 8 520H0V0Z"
+        ></path>
+        <path
+          fill="var(--land-ar)"
+          d="M300 540c150 70 340 180 700 210v250H270c-16-120-8-250 30-460Z"
+        ></path>
+        <path
+          fill="none"
+          stroke="var(--water)"
+          stroke-width="92"
+          stroke-linecap="round"
+          d="M368-40c-16 90 28 150-8 230"
+        ></path>
+        <path
+          fill="none"
+          stroke="var(--water)"
+          stroke-width="36"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          d="M358 170c-22 120 24 210-6 330-28 150-4 250 10 370"
+        ></path>
+        <path
+          fill="none"
+          stroke="var(--water)"
+          stroke-width="24"
+          stroke-linecap="round"
+          d="M352 512c130 48 280 150 430 186 130 32 200 8 270-28"
+        ></path>
+        <path
+          fill="none"
+          stroke="var(--forest)"
+          stroke-width="11"
+          stroke-linecap="butt"
+          d="M292 198h148"
+        ></path>
+      </svg>
+      {countries.map((country) => (
+        <p
+          class="map-country"
+          data-land={country.land}
+          data-align={country.align}
+          style={`--x:${country.x};--y:${country.y}`}
+        >
+          {country.name}
+        </p>
+      ))}
+      <ul class="map-pins">
+        {points.map((point) => (
+          <li>
+            <a
+              class="map-pin"
+              data-testid="map-pin"
+              data-pin={point.pin.image}
+              data-land={point.pin.land}
+              data-side={point.pin.labelSide}
+              href={`#${point.card}`}
+              style={`--x:${point.pin.x};--y:${point.pin.y}`}
+            >
+              <span class="map-dot" aria-hidden="true" />
+              <span class="map-label">{point.copy.label.text}</span>
+              {point.rest && <span class="sr-only">{point.rest}</span>}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+    <div class="map-panel">
+      <div class="map-idle">
+        <p class="meta">{dict.regionMap.idleMeta.text}</p>
+        <h3>{dict.regionMap.idleTitle.text}</h3>
+        <p class="map-copy">{dict.regionMap.idleText.text}</p>
+      </div>
+      {points.map((point) => (
+        <article
+          class="map-card"
+          id={point.card}
+          data-testid="map-card"
+          data-card={point.pin.image}
+          tabindex="-1"
+          aria-labelledby={`${point.card}-place ${point.card}-title`}
+          aria-describedby={`${point.card}-text`}
+        >
+          <p class="meta" id={`${point.card}-place`}>
+            {point.territory.place.text}
+          </p>
+          <h3 id={`${point.card}-title`}>{point.copy.name.text}</h3>
+          <p class="map-copy" id={`${point.card}-text`}>
+            {point.territory.text.text}
+          </p>
+          {/* Anchor on the territory tile. Swap sectionHref for a page route when tour pages exist. */}
+          <a class="text-link map-link" href={point.href}>
+            {dict.regionMap.link.text}
+            <span class="sr-only"> {point.copy.name.text}</span>
+          </a>
+        </article>
+      ))}
+    </div>
+  </div>
+</div>
+<script>
+  import { bindMap } from '../scripts/map.ts';
+
+  for (const node of document.querySelectorAll('[data-region-map]')) {
+    if (node instanceof HTMLElement) bindMap(node);
+  }
+</script>

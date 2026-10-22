@@ -19,11 +19,19 @@ export function isCopy(value: unknown): value is Copy {
   );
 }
 
+export type TerritoryImage = 'falls-br' | 'falls-ar' | 'itaipu' | 'paraguay' | 'frontier';
+
 export interface Territory {
   name: Copy;
   place: Copy;
   text: Copy;
-  image: 'falls-br' | 'falls-ar' | 'itaipu' | 'paraguay' | 'frontier';
+  image: TerritoryImage;
+}
+
+export interface MapPointCopy {
+  image: TerritoryImage;
+  name: Copy;
+  label: Copy;
 }
 
 export interface Experience {
@@ -46,6 +54,15 @@ export interface Dictionary {
   };
   manifesto: { kicker: Copy; quote: Copy; facts: Copy[] };
   territories: { kicker: Copy; title: Copy; lede: Copy; items: Territory[] };
+  regionMap: {
+    title: Copy;
+    idleMeta: Copy;
+    idleTitle: Copy;
+    idleText: Copy;
+    link: Copy;
+    countries: { br: Copy; ar: Copy; py: Copy };
+    points: MapPointCopy[];
+  };
   experiences: { kicker: Copy; title: Copy; lede: Copy; items: Experience[] };
   method: {
     kicker: Copy;
