@@ -477,12 +477,15 @@ a {
 
 .hero-playback {
   appearance: none;
+  display: inline-flex;
+  align-items: center;
+  min-height: 3.25rem;
   margin: 0;
   border: 0;
   background-color: transparent;
   background-image: linear-gradient(currentColor, currentColor);
   background-repeat: no-repeat;
-  background-position: 0 100%;
+  background-position: 0 calc(50% + 1.2rem);
   background-size: 100% 1px;
   color: var(--cream);
   font: inherit;

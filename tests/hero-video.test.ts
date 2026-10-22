@@ -10,6 +10,49 @@ const root = parse(html);
 /** Hard ceiling from the acceptance budget. Encodes should land well under this. */
 const MAX_BYTES = 2 * 1024 * 1024;
 
+/** Top-level rules only, so a media-query override is not treated as the resting size. */
+function withoutAtBlocks(source: string) {
+  let out = '';
+  for (let i = 0; i < source.length; i += 1) {
+    if (source.startsWith('@media', i) || source.startsWith('@keyframes', i)) {
+      const open = source.indexOf('{', i);
+      let depth = 0;
+      let j = open;
+      for (; j < source.length; j += 1) {
+        if (source[j] === '{') depth += 1;
+        else if (source[j] === '}') {
+          depth -= 1;
+          if (depth === 0) break;
+        }
+      }
+      i = j;
+      continue;
+    }
+    out += source[i];
+  }
+  return out;
+}
+
+function declarations(source: string, selector: string) {
+  const decls: Record<string, string> = {};
+  for (const match of withoutAtBlocks(source).matchAll(/([^{}]+)\{([^{}]*)\}/g)) {
+    const selectors = match[1].split(',').map((item) => item.trim().replace(/\s+/g, ' '));
+    if (!selectors.includes(selector)) continue;
+    for (const part of match[2].split(';')) {
+      const [rawProp, ...rest] = part.split(':');
+      if (!rawProp || rest.length === 0) continue;
+      decls[rawProp.trim()] = rest.join(':').trim();
+    }
+  }
+  return decls;
+}
+
+function remPx(value: string, rootPx: number) {
+  const match = value.trim().match(/^([\d.]+)rem$/);
+  if (!match) throw new Error(`expected a rem length, got ${value}`);
+  return Number(match[1]) * rootPx;
+}
+
 describe('hero video', () => {
   it('layers a muted sourceless clip over the priority photograph', () => {
     const hero = root.querySelector('[data-testid="hero"]');
@@ -59,6 +102,19 @@ describe('hero video', () => {
     ).toBe(true);
     expect(webmBytes.includes(Buffer.from('A_OPUS'))).toBe(false);
     expect(webmBytes.includes(Buffer.from('A_VORBIS'))).toBe(false);
+  });
+
+  it('renders the pause control at least 44px tall', () => {
+    const css = readFileSync(path.join(rootDir, 'src/styles/global.css'), 'utf8');
+    const button = declarations(css, '.hero-playback');
+    const body = declarations(css, 'body');
+    const rootPx = 16;
+    const fontSize = remPx(button['font-size'], rootPx);
+    const lineHeight = Number(body['line-height']) * fontSize;
+    const padding = remPx(button['padding-block'], rootPx) * 2;
+    const minHeight = button['min-height'] ? remPx(button['min-height'], rootPx) : 0;
+    const height = Math.max(lineHeight + padding, minHeight);
+    expect(height, `pause control renders at ${height.toFixed(1)}px`).toBeGreaterThanOrEqual(44);
   });
 
   it('prefixes the clip URLs when the site is served from /mptour', () => {
