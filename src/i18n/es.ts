@@ -53,7 +53,7 @@ export const es = {
       {
         name: ph('Itaipú'),
         place: ph('Brasil y Paraguay'),
-        text: ph('La represa ocupa toda la vista. El río Paraná pasa ancho, ahí abajo.'),
+        text: ph('La represa ocupa toda la vista. El Paraná corre ancho, ahí abajo.'),
         image: 'itaipu',
       },
       {
@@ -82,7 +82,7 @@ export const es = {
       py: ph('Paraguay'),
     },
     points: [
-      { image: 'falls-br', name: ph('Cataratas lado brasileño'), label: ph('Cataratas') },
+      { image: 'falls-br', name: ph('Cataratas del lado brasileño'), label: ph('Cataratas') },
       { image: 'falls-ar', name: ph('Cataratas lado argentino'), label: ph('Cataratas') },
       { image: 'itaipu', name: ph('Itaipú'), label: ph('Itaipú') },
       {

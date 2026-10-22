@@ -46,7 +46,7 @@ npm run preview
 - http://127.0.0.1:4321/en/
 - http://127.0.0.1:4321/creditos/
 
-A navegação aponta para `/#territorios`, `/#experiencias`, `/#como-funciona` e `/#monte-seu-roteiro` (em `/es/` e `/en/`, o mesmo com o prefixo do idioma). Não existe uma página solta para essas seções.
+A navegação aponta para `/#territorios`, `/#experiencias`, `/#como-funciona` e `/#plan` (em `/es/` e `/en/`, o mesmo com o prefixo do idioma). Não existe uma página solta para essas seções.
 
 ## Fotografias
 

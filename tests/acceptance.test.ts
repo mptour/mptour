@@ -61,7 +61,7 @@ describe('placeholders, i18n and base path', () => {
       '/#experiencias',
       '/#como-funciona',
     ]);
-    expect(page.querySelector('.header-cta')?.getAttribute('href')).toBe('/#monte-seu-roteiro');
+    expect(page.querySelector('.header-cta')?.getAttribute('href')).toBe('/#plan');
     expect(page.querySelector('[data-testid="credits-link"]')?.getAttribute('href')).toBe(
       '/creditos/',
     );
@@ -101,6 +101,8 @@ describe('placeholders, i18n and base path', () => {
 
     expect(html).toContain(WHATSAPP_DISPLAY);
     expect(html).not.toContain('data-placeholder="whatsapp"');
+    expect(html).not.toContain('monte-seu-roteiro');
+    expect(html).toContain('id="plan"');
   });
 
   it('names photos and videos on the credits link, matching the credits page title', () => {
@@ -159,6 +161,11 @@ describe('placeholders, i18n and base path', () => {
         `/${locale}/#experiencias`,
         `/${locale}/#como-funciona`,
       ]);
+      expect(page.toString(), locale).not.toContain('monte-seu-roteiro');
+      expect(page.querySelector('.header-cta')?.getAttribute('href'), locale).toBe(
+        `/${locale}/#plan`,
+      );
+      expect(page.querySelector('#plan'), locale).toBeTruthy();
     }
 
     expect(
@@ -192,7 +199,7 @@ describe('placeholders, i18n and base path', () => {
 
     const basedPage = parse(based);
     expect(basedPage.querySelector('[data-testid="cta-primary"]')?.getAttribute('href')).toBe(
-      '#monte-seu-roteiro',
+      '#plan',
     );
     expect(basedPage.querySelector('.nav-link')?.getAttribute('href')).toBe('/mptour/#territorios');
     expect(basedPage.querySelector('[data-testid="credits-link"]')?.getAttribute('href')).toBe(
@@ -236,18 +243,18 @@ describe('placeholders, i18n and base path', () => {
     expect(offenders).toEqual([]);
   });
 
-  it('never canonicalizes the missing page and keeps internal routes real', () => {
+  it('points the missing page at its own URL and keeps internal routes real', () => {
     const missing = readPage('dist', '404.html');
     expect(missing.toString()).not.toMatch(/PLACEHOLDER/);
+    expect(missing.querySelectorAll('link[rel="alternate"]')).toHaveLength(0);
     const canonical = missing.querySelector('link[rel="canonical"]')?.getAttribute('href') ?? '';
-    expect(canonical).toBe('https://mptour.github.io/');
-    expect(canonical).not.toContain('404');
+    expect(canonical).toBe('https://mptour.github.io/404/');
 
     const basedMissing = readPage('dist-base', '404.html');
+    expect(basedMissing.querySelectorAll('link[rel="alternate"]')).toHaveLength(0);
     const basedCanonical =
       basedMissing.querySelector('link[rel="canonical"]')?.getAttribute('href') ?? '';
-    expect(basedCanonical).toBe('https://mptour.github.io/mptour/');
-    expect(basedCanonical).not.toContain('404');
+    expect(basedCanonical).toBe('https://mptour.github.io/mptour/404/');
 
     const home = readFileSync(path.join(rootDir, 'dist/index.html'), 'utf8');
     const known = new Set(['/', '/es/', '/en/', '/creditos/']);

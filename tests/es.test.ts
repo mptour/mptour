@@ -12,14 +12,12 @@ const ES_DESCRIPTION =
 
 /** Visible label must stay a prefix of the accessible tour name. */
 const ES_MAP = [
-  { image: 'falls-br', label: 'Cataratas', name: 'Cataratas lado brasileño' },
+  { image: 'falls-br', label: 'Cataratas', name: 'Cataratas del lado brasileño' },
   { image: 'falls-ar', label: 'Cataratas', name: 'Cataratas lado argentino' },
   { image: 'itaipu', label: 'Itaipú', name: 'Itaipú' },
   { image: 'paraguay', label: 'Paraguay', name: 'Paraguay (Ciudad del Este)' },
   { image: 'frontier', label: 'Hito', name: 'Hito de las Tres Fronteras' },
 ] as const;
-
-const PAGES = ['index.html', 'es/index.html', 'en/index.html', 'creditos/index.html', '404.html'];
 
 function readPage(outDir: string, page: string) {
   return parse(readFileSync(path.join(rootDir, outDir, page), 'utf8'));
@@ -130,10 +128,30 @@ describe('spanish locale', () => {
     expect(page.querySelector('.map-country[data-land="py"]')?.text.trim()).toBe('Paraguay');
   });
 
-  it('lists hreflang pt-BR, es, en and x-default on every page', () => {
-    for (const page of PAGES) {
+  it('emits pt-BR, es, en and x-default only on the three homes', () => {
+    for (const page of ['index.html', 'es/index.html', 'en/index.html']) {
       expect(alternates('dist', page), page).toEqual(expectedAlternates(''));
       expect(alternates('dist-base', page), `base ${page}`).toEqual(expectedAlternates('/mptour'));
+    }
+  });
+
+  it('lists only the Portuguese credits page until Spanish and English credits exist', () => {
+    expect(alternates('dist', 'creditos/index.html')).toEqual([
+      { hreflang: 'pt-BR', href: 'https://mptour.github.io/creditos/' },
+    ]);
+    expect(alternates('dist-base', 'creditos/index.html')).toEqual([
+      { hreflang: 'pt-BR', href: 'https://mptour.github.io/mptour/creditos/' },
+    ]);
+  });
+
+  it('gives the missing page its own canonical and no hreflang', () => {
+    for (const [outDir, href] of [
+      ['dist', 'https://mptour.github.io/404/'],
+      ['dist-base', 'https://mptour.github.io/mptour/404/'],
+    ] as const) {
+      const page = readPage(outDir, '404.html');
+      expect(alternates(outDir, '404.html'), outDir).toEqual([]);
+      expect(page.querySelector('link[rel="canonical"]')?.getAttribute('href'), outDir).toBe(href);
     }
   });
 
