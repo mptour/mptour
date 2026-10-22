@@ -103,6 +103,22 @@ describe('placeholders, i18n and base path', () => {
     expect(html).not.toContain('data-placeholder="whatsapp"');
   });
 
+  it('names photos and videos on the credits link, matching the credits page title', () => {
+    const expected = 'Créditos das fotos e dos vídeos';
+    for (const page of ['index.html', 'es/index.html', 'en/index.html']) {
+      const link = readPage('dist', page).querySelector('[data-testid="credits-link"]');
+      expect(link?.getAttribute('href'), page).toMatch(/\/creditos\/$/);
+      expect(link?.text.trim(), page).toBe(expected);
+    }
+
+    const credits = readPage('dist', 'creditos/index.html');
+    expect(credits.querySelector('title')?.text.trim()).toBe(expected);
+    expect(credits.querySelector('h1')?.text.trim()).toBe(expected);
+    expect(credits.querySelector('.lede')?.text.trim()).toBe(
+      'As fotos e os vídeos ainda são provisórios. Aqui embaixo tem a fonte, o autor e a licença de cada um.',
+    );
+  });
+
   it('publishes ES and EN as Portuguese fallbacks, with locale-specific WhatsApp text', () => {
     for (const locale of ['es', 'en'] as const) {
       const page = readPage('dist', `${locale}/index.html`);
