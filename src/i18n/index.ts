@@ -4,12 +4,7 @@ import { isCopy, type Dictionary } from './mark';
 import { es } from './es';
 import { pt } from './pt';
 
-/** Locales with their own copy. English still falls back to Portuguese. */
-const translated = new Set<Locale>(['pt', 'es']);
-
-export function isTranslated(locale: Locale): boolean {
-  return translated.has(locale);
-}
+const extras = { es, en } as const;
 
 function merge<T>(base: T, extra: unknown): T {
   if (extra === undefined) return base;
@@ -29,11 +24,39 @@ function merge<T>(base: T, extra: unknown): T {
   return base;
 }
 
+/** A locale is translated when every piece of copy is present, not just a few strings. */
+function covers(base: unknown, extra: unknown): boolean {
+  if (isCopy(base)) return isCopy(extra);
+  if (Array.isArray(base)) {
+    return (
+      Array.isArray(extra) &&
+      extra.length === base.length &&
+      base.every((item, index) => covers(item, extra[index]))
+    );
+  }
+  if (base && typeof base === 'object') {
+    if (!extra || typeof extra !== 'object' || Array.isArray(extra)) return false;
+    const over = extra as Record<string, unknown>;
+    return Object.entries(base as Record<string, unknown>).every(([key, value]) => {
+      if (isCopy(value) || Array.isArray(value) || (value && typeof value === 'object')) {
+        return key in over && covers(value, over[key]);
+      }
+      return true;
+    });
+  }
+  return true;
+}
+
+export function isTranslated(locale: Locale): boolean {
+  if (locale === 'pt') return true;
+  return covers(pt, extras[locale]);
+}
+
 export function t(locale: Locale): { dict: Dictionary; untranslated: boolean } {
+  if (locale === 'pt') return { dict: pt, untranslated: false };
+  const extra = extras[locale];
   const untranslated = !isTranslated(locale);
-  if (locale === 'pt') return { dict: pt, untranslated };
-  if (locale === 'es') return { dict: es, untranslated };
-  return { dict: merge(pt, en), untranslated };
+  return { dict: untranslated ? merge(pt, extra) : extra, untranslated };
 }
 
 export { chrome, htmlLang, notices, ogLocale } from './ui';

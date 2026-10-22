@@ -62,18 +62,43 @@ const TOURS_ES = [
   },
 ] as const;
 
+type TourName = { image: string; name: string; anchor: string; card: string };
+
+const EN_TOURS = [
+  {
+    image: 'falls-br',
+    name: 'Falls on the Brazilian side',
+    anchor: 'cataratas-brasil',
+    card: 'mapa-cataratas-brasil',
+  },
+  {
+    image: 'falls-ar',
+    name: 'Falls on the Argentine side',
+    anchor: 'cataratas-argentina',
+    card: 'mapa-cataratas-argentina',
+  },
+  { image: 'itaipu', name: 'Itaipu', anchor: 'itaipu', card: 'mapa-itaipu' },
+  {
+    image: 'paraguay',
+    name: 'Paraguay (Ciudad del Este)',
+    anchor: 'paraguai',
+    card: 'mapa-paraguai',
+  },
+  {
+    image: 'frontier',
+    name: 'Mark of the Three Borders',
+    anchor: 'tres-fronteiras',
+    card: 'mapa-tres-fronteiras',
+  },
+] as const satisfies readonly TourName[];
+
 function readPage(outDir: string, page: string) {
   const file = path.join(rootDir, outDir, page);
   expect(existsSync(file), `${outDir}/${page} should exist`).toBe(true);
   return parse(readFileSync(file, 'utf8'));
 }
 
-function expectMap(
-  outDir: string,
-  page: string,
-  homePath: string,
-  tours: typeof TOURS_PT | typeof TOURS_ES,
-) {
+function expectMap(outDir: string, page: string, homePath: string, tours: readonly TourName[]) {
   const html = readPage(outDir, page);
   const source = html.toString();
   const territories = html.querySelector('[data-testid="territories"]');
@@ -112,6 +137,9 @@ function expectMap(
       'visible label must be the accessible name',
     ).toBeFalsy();
     expect(pin?.getAttribute('href')).toBe(`#${tour.card}`);
+    const label = pin?.querySelector('.map-label')?.text.trim() ?? '';
+    expect(label.length, tour.name).toBeGreaterThan(0);
+    expect(tour.name.startsWith(label), `${label} must prefix ${tour.name}`).toBe(true);
     expect(pin?.text).toContain(tour.name);
 
     const card = cards.find((node) => node.getAttribute('data-card') === tour.image);
@@ -134,14 +162,17 @@ describe('region map', () => {
     expectMap('dist', 'index.html', '/', TOURS_PT);
   });
 
-  it('keeps the Portuguese names on the English fallback and under the project-site base', () => {
-    expectMap('dist', 'en/index.html', '/en/', TOURS_PT);
+  it('keeps the Portuguese names under the project-site base', () => {
     expectMap('dist-base', 'index.html', '/mptour/', TOURS_PT);
-    expectMap('dist-base', 'en/index.html', '/mptour/en/', TOURS_PT);
   });
 
   it('translates the Spanish map names and keeps the same anchors', () => {
     expectMap('dist', 'es/index.html', '/es/', TOURS_ES);
     expectMap('dist-base', 'es/index.html', '/mptour/es/', TOURS_ES);
+  });
+
+  it('translates the English map names and keeps each label a prefix of the tour name', () => {
+    expectMap('dist', 'en/index.html', '/en/', EN_TOURS);
+    expectMap('dist-base', 'en/index.html', '/mptour/en/', EN_TOURS);
   });
 });

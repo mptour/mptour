@@ -30,8 +30,10 @@ export default defineConfig({
         return (
           pathname === '/' ||
           pathname === '/es/' ||
+          pathname === '/en/' ||
           pathname === '/mptour/' ||
-          pathname === '/mptour/es/'
+          pathname === '/mptour/es/' ||
+          pathname === '/mptour/en/'
         );
       },
     }),

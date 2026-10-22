@@ -89,7 +89,7 @@ describe('spanish locale', () => {
     expect(page.querySelector('script[type="application/ld+json"]')).toBeTruthy();
 
     expect(page.querySelector('[data-testid="locale-es"]')?.hasAttribute('data-draft')).toBe(false);
-    expect(page.querySelector('[data-testid="locale-en"]')?.hasAttribute('data-draft')).toBe(true);
+    expect(page.querySelector('[data-testid="locale-en"]')?.hasAttribute('data-draft')).toBe(false);
     expect(
       readPage('dist', 'index.html')
         .querySelector('[data-testid="locale-es"]')
@@ -137,15 +137,15 @@ describe('spanish locale', () => {
     }
   });
 
-  it('adds /es/ to the sitemap and leaves the English fallback out', () => {
+  it('adds /es/ and /en/ to the sitemap', () => {
     const rooted = sitemapXml('dist');
     expect(rooted).toContain('https://mptour.github.io/</loc>');
     expect(rooted).toContain('https://mptour.github.io/es/</loc>');
-    expect(rooted).not.toContain('https://mptour.github.io/en/</loc>');
+    expect(rooted).toContain('https://mptour.github.io/en/</loc>');
 
     const based = sitemapXml('dist-base');
     expect(based).toContain('https://mptour.github.io/mptour/</loc>');
     expect(based).toContain('https://mptour.github.io/mptour/es/</loc>');
-    expect(based).not.toContain('https://mptour.github.io/mptour/en/</loc>');
+    expect(based).toContain('https://mptour.github.io/mptour/en/</loc>');
   });
 });

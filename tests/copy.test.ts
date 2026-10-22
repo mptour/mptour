@@ -66,12 +66,12 @@ const BANNED_IN_ES = [
 ];
 
 describe('copy', () => {
-  it('marks every Portuguese and Spanish string and leaves EN marketing empty', () => {
+  it('marks every Portuguese, Spanish, and English string', () => {
     assertMarked(pt, 'pt');
     assertMarked(es, 'es');
+    assertMarked(en, 'en');
     assertMarked(chrome, 'chrome');
     assertMarked(notices, 'notices');
-    expect(en).toEqual({});
   });
 
   it('keeps agency clichés out of the Portuguese copy', () => {

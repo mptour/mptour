@@ -30,7 +30,7 @@ BASE_PATH=/mptour npm run preview
 
 ## Idiomas
 
-Português é o padrão, em `/`. `/es/` está em espanhol (usted, para quem vem da Argentina ou do Paraguai) e entra no índice. `/en/` ainda mostra o texto em português, com um aviso de que a tradução está em preparação, e sai com `noindex`. O dicionário inglês vazio está em `src/i18n/en.ts`.
+Português é o padrão, em `/`. `/es/` está em espanhol (usted, para quem vem da Argentina ou do Paraguai) e `/en/` está em inglês. Os dois entram no índice, sem aviso de tradução e sem `noindex`.
 
 ## Como testar
 
