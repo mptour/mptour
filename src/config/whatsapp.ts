@@ -14,7 +14,7 @@ export type Locale = (typeof LOCALES)[number];
 export const WHATSAPP_MESSAGE = {
   pt: 'Olá, MPTour. Quero montar meu roteiro em Foz do Iguaçu.',
   es: 'Hola, MPTour. Quiero armar mi itinerario en Foz do Iguaçu.',
-  en: 'Hello, MPTour. I would like to plan my trip in Foz do Iguaçu.',
+  en: 'Hi, MPTour. I want a private tour in Foz do Iguaçu.',
 } as const satisfies Record<Locale, string>;
 
 export function whatsappHref(locale: Locale, message: string = WHATSAPP_MESSAGE[locale]): string {
