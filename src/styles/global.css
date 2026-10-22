@@ -497,6 +497,10 @@ a {
   cursor: pointer;
 }
 
+.hero-playback[hidden] {
+  display: none;
+}
+
 .hero-playback:focus-visible {
   outline: 2px solid var(--cream);
   outline-offset: 3px;

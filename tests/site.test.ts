@@ -1,4 +1,5 @@
 // @vitest-environment happy-dom
+import { readFileSync } from 'node:fs';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   HERO_NARROW_MEDIA,
@@ -302,6 +303,62 @@ describe('bindSite', () => {
     bindSite(document, view);
     expect(document.querySelector<HTMLButtonElement>('[data-hero-playback]')?.hidden).toBe(true);
     expect(document.querySelector('[data-hero-video]')?.getAttribute('src')).toBeNull();
+  });
+
+  it('computes the pause control as hidden on a phone until the vertical clip plays', () => {
+    const style = document.createElement('style');
+    style.textContent = readFileSync('src/styles/global.css', 'utf8');
+    document.head.append(style);
+    const markup = `
+      <video
+        data-hero-video
+        data-src-webm-narrow="/media/hero-narrow.webm"
+        data-src-mp4-narrow="/media/hero-narrow.mp4"
+        aria-hidden="true"
+      ></video>
+      <button
+        type="button"
+        class="hero-playback"
+        data-hero-playback
+        data-label-pause="Pausar vídeo"
+        data-label-play="Tocar vídeo"
+        hidden
+        aria-pressed="false"
+      >
+        Pausar vídeo
+      </button>
+    `;
+
+    document.body.innerHTML = markup;
+    const parked = document.querySelector<HTMLButtonElement>('[data-hero-playback]');
+    expect(getComputedStyle(parked!).display).toBe('none');
+
+    for (const flags of [
+      { reduce: true, wide: false },
+      { reduce: false, wide: false, saveData: true },
+      { reduce: false, wide: false, effectiveType: '3g' },
+    ] as const) {
+      document.body.innerHTML = markup;
+      bindSite(document, installView(flags));
+      const held = document.querySelector<HTMLButtonElement>('[data-hero-playback]');
+      expect(held?.hidden, JSON.stringify(flags)).toBe(true);
+      expect(getComputedStyle(held!).display, JSON.stringify(flags)).toBe('none');
+      expect(document.querySelector('[data-hero-video] source')).toBeNull();
+    }
+
+    document.body.innerHTML = markup;
+    bindSite(document, installView({ reduce: false, wide: false, effectiveType: '4g' }));
+    const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+    const button = document.querySelector<HTMLButtonElement>('[data-hero-playback]');
+    expect(
+      [...(video?.querySelectorAll('source') ?? [])].map((node) => node.getAttribute('src')),
+    ).toEqual(['/media/hero-narrow.webm', '/media/hero-narrow.mp4']);
+    expect(button?.hidden).toBe(false);
+    expect(getComputedStyle(button!).display).not.toBe('none');
+    button?.click();
+    expect(video?.paused).toBe(true);
+    expect(button?.textContent?.trim()).toBe('Tocar vídeo');
+    style.remove();
   });
 
   it('attaches both formats and uses the hero photograph as the poster', () => {
