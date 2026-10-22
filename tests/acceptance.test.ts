@@ -119,6 +119,15 @@ describe('placeholders, i18n and base path', () => {
     );
   });
 
+  it('says photos and videos are still provisional in the footer sentence', () => {
+    const expected =
+      'As fotos e os vídeos ainda são provisórios. O número acima é o nosso WhatsApp.';
+    for (const page of ['index.html', 'es/index.html', 'en/index.html', 'creditos/index.html']) {
+      const footer = readPage('dist', page).querySelector('[data-testid="footer"]');
+      expect(footer?.text, page).toContain(expected);
+    }
+  });
+
   it('publishes ES and EN as Portuguese fallbacks, with locale-specific WhatsApp text', () => {
     for (const locale of ['es', 'en'] as const) {
       const page = readPage('dist', `${locale}/index.html`);
