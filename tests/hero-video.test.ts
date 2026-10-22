@@ -25,6 +25,13 @@ describe('hero video', () => {
     expect(video?.querySelector('source')).toBeNull();
     expect(video?.hasAttribute('poster')).toBe(false);
 
+    const playback = hero?.querySelector('[data-hero-playback]');
+    expect(playback?.tagName).toBe('BUTTON');
+    expect(video?.querySelector('[data-hero-playback]')).toBeNull();
+    expect(playback?.hasAttribute('hidden')).toBe(true);
+    expect(playback?.text.trim()).toBe('Pausar vídeo');
+    expect(playback?.getAttribute('aria-pressed')).toBe('false');
+
     const still = hero?.querySelector('img');
     expect(still?.getAttribute('fetchpriority')).toBe('high');
     expect(still?.getAttribute('loading')).toBe('eager');

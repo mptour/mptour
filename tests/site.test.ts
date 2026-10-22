@@ -183,6 +183,54 @@ describe('bindSite', () => {
     );
   });
 
+  it('pauses the loaded clip from a control outside the video and resumes it', () => {
+    document.body.innerHTML = `
+      <video data-hero-video data-src="/clip.mp4" aria-hidden="true"></video>
+      <button
+        type="button"
+        data-hero-playback
+        data-label-pause="Pausar vídeo"
+        data-label-play="Tocar vídeo"
+        hidden
+        aria-pressed="false"
+      >
+        Pausar vídeo
+      </button>
+    `;
+    const view = installView({ reduce: false, wide: true, effectiveType: '4g' });
+    bindSite(document, view);
+    const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+    const button = document.querySelector<HTMLButtonElement>('[data-hero-playback]');
+    expect(button).toBeTruthy();
+    expect(video?.contains(button as Node)).toBe(false);
+    expect(video?.getAttribute('aria-hidden')).toBe('true');
+    expect(button?.hidden).toBe(false);
+    expect(button?.textContent?.trim()).toBe('Pausar vídeo');
+    expect(button?.getAttribute('aria-pressed')).toBe('false');
+    expect(video?.paused).toBe(false);
+
+    button?.click();
+    expect(video?.paused).toBe(true);
+    expect(button?.textContent?.trim()).toBe('Tocar vídeo');
+    expect(button?.getAttribute('aria-pressed')).toBe('true');
+
+    button?.click();
+    expect(video?.paused).toBe(false);
+    expect(button?.textContent?.trim()).toBe('Pausar vídeo');
+    expect(button?.getAttribute('aria-pressed')).toBe('false');
+  });
+
+  it('keeps the playback control hidden when the clip is not loaded', () => {
+    document.body.innerHTML = `
+      <video data-hero-video data-src="/clip.mp4" aria-hidden="true"></video>
+      <button type="button" data-hero-playback hidden aria-pressed="false">Pausar vídeo</button>
+    `;
+    const view = installView({ reduce: true, wide: true });
+    bindSite(document, view);
+    expect(document.querySelector<HTMLButtonElement>('[data-hero-playback]')?.hidden).toBe(true);
+    expect(document.querySelector('[data-hero-video]')?.getAttribute('src')).toBeNull();
+  });
+
   it('attaches both formats and uses the hero photograph as the poster', () => {
     document.body.innerHTML = `
       <img class="hero-still" src="/assets/hero.jpg" />

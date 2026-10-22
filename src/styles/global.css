@@ -475,6 +475,30 @@ a {
   background-size: 100% 1px;
 }
 
+.hero-playback {
+  appearance: none;
+  margin: 0;
+  border: 0;
+  background-color: transparent;
+  background-image: linear-gradient(currentColor, currentColor);
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  background-size: 100% 1px;
+  color: var(--cream);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding-block: 0.6rem;
+  cursor: pointer;
+}
+
+.hero-playback:focus-visible {
+  outline: 2px solid var(--cream);
+  outline-offset: 3px;
+}
+
 .cue {
   position: absolute;
   z-index: 2;

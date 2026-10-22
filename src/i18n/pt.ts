@@ -22,6 +22,8 @@ export const pt = {
     ),
     cta: ph('Monte seu roteiro'),
     secondary: ph('Ver experiências'),
+    pause: ph('Pausar vídeo'),
+    play: ph('Tocar vídeo'),
   },
   manifesto: {
     kicker: ph('A casa'),

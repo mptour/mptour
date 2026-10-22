@@ -24,6 +24,32 @@ function videoSource(doc: Document, src: string, type: string): HTMLSourceElemen
   return node;
 }
 
+function reflectPlayback(video: HTMLVideoElement, button: HTMLButtonElement): void {
+  const paused = video.paused;
+  button.hidden = false;
+  button.textContent = paused
+    ? (button.dataset.labelPlay ?? 'Tocar vídeo')
+    : (button.dataset.labelPause ?? 'Pausar vídeo');
+  button.setAttribute('aria-pressed', paused ? 'true' : 'false');
+}
+
+function bindPlayback(video: HTMLVideoElement, button: HTMLButtonElement | null): void {
+  if (!button || button.dataset.bound === 'true') return;
+  button.dataset.bound = 'true';
+  const reflect = () => reflectPlayback(video, button);
+  button.addEventListener('click', () => {
+    if (video.paused) {
+      const pending = video.play?.();
+      void pending?.catch?.(() => reflect());
+      return;
+    }
+    video.pause();
+  });
+  video.addEventListener('play', reflect);
+  video.addEventListener('pause', reflect);
+  reflect();
+}
+
 export function bindSite(doc: Document, view: View): void {
   const header = doc.querySelector<HTMLElement>('[data-header]');
   const nav = doc.querySelector<HTMLElement>('[data-nav]');
@@ -85,6 +111,7 @@ export function bindSite(doc: Document, view: View): void {
 
       video.muted = true;
       video.addEventListener('playing', () => video.classList.add('is-playing'), { once: true });
+      bindPlayback(video, doc.querySelector<HTMLButtonElement>('[data-hero-playback]'));
 
       if (webm || mp4) {
         if (webm) video.append(videoSource(doc, webm, 'video/webm'));
