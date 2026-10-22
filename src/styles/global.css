@@ -497,6 +497,11 @@ a {
   cursor: pointer;
 }
 
+/* The hidden attribute loses to author display, so the control stayed painted at phone widths where the clip never loads. */
+.hero-playback[hidden] {
+  display: none;
+}
+
 .hero-playback:focus-visible {
   outline: 2px solid var(--cream);
   outline-offset: 3px;
