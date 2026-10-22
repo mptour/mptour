@@ -1,0 +1,43 @@
+---
+import { IMAGE_CREDITS } from '../assets/credits';
+import { WHATSAPP_DISPLAY, whatsappHref, type Locale } from '../config/whatsapp';
+import type { Dictionary } from '../i18n';
+import { localeHref } from '../lib/paths';
+import LocaleSwitch from './LocaleSwitch.astro';
+
+interface Props {
+  dict: Dictionary;
+  locale: Locale;
+}
+
+const { dict, locale } = Astro.props;
+const year = new Date().getFullYear();
+---
+
+<footer class="footer" data-testid="footer">
+  <div class="footer-top">
+    <div>
+      <a class="logo" href={localeHref(locale)}>
+        MPTour
+      </a>
+      <p>{dict.footer.place.text}</p>
+    </div>
+    <div>
+      <a class="phone" href={whatsappHref(locale)} target="_blank" rel="noopener noreferrer">
+        {WHATSAPP_DISPLAY}
+      </a>
+      <LocaleSwitch locale={locale} />
+    </div>
+  </div>
+  <p>{dict.footer.legal.text}</p>
+  <p>© {year} MPTour</p>
+  <ul class="credits">
+    {IMAGE_CREDITS.map((credit) => (
+      <li>
+        <a href={credit.href}>{credit.author}</a>
+        {' · '}
+        {credit.license}
+      </li>
+    ))}
+  </ul>
+</footer>

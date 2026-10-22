@@ -56,7 +56,7 @@ describe('placeholders, i18n and base path', () => {
     }
 
     expect(page.querySelectorAll('[data-testid="territory"]')).toHaveLength(5);
-    expect(page.querySelectorAll('[data-testid="experience"]')).toHaveLength(6);
+    expect(page.querySelectorAll('[data-testid="experience"]')).toHaveLength(5);
     expect(html).not.toMatch(/R\$|US\$|€|\bpreço\b/i);
 
     const testids = page

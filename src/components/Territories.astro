@@ -1,0 +1,51 @@
+---
+import type { Dictionary } from '../i18n';
+import { focal, stills } from '../assets/media';
+import Media from './Media.astro';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+const areas = ['t-br', 't-ar', 't-itaipu', 't-py', 't-tri'];
+---
+
+<section class="section" id="territorios" data-testid="territories">
+  <div class="section-head" data-reveal>
+    <div>
+      <p class="kicker">{dict.territories.kicker.text}</p>
+      <h2>{dict.territories.title.text}</h2>
+    </div>
+    <p>{dict.territories.lede.text}</p>
+  </div>
+  <div class="mosaic">
+    {dict.territories.items.map((item, index) => {
+      const still = stills[item.image];
+      return (
+        <a
+          class:list={['tile', areas[index]]}
+          href="#monte-seu-roteiro"
+          data-testid="territory"
+          data-reveal
+          style={`--d:${index};--focal:${focal.tile[item.image]}`}
+        >
+          <figure>
+            <Media
+              src={still.src}
+              alt={still.alt}
+              widths={[480, 900, 1400]}
+              sizes="(min-width: 860px) 45vw, 100vw"
+            />
+            <figcaption>
+              <p class="meta">{item.place.text}</p>
+              <h3>{item.name.text}</h3>
+              <p class="text">{item.text.text}</p>
+              <span class="mark">PLACEHOLDER</span>
+            </figcaption>
+          </figure>
+        </a>
+      );
+    })}
+  </div>
+</section>

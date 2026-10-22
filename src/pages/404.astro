@@ -1,0 +1,25 @@
+---
+import { t } from '../i18n';
+import { localeHref } from '../lib/paths';
+import Base from '../layouts/Base.astro';
+
+const locale = 'pt' as const;
+const { dict, untranslated } = t(locale);
+---
+
+<Base
+  locale={locale}
+  dict={dict}
+  title={dict.missing.title.text}
+  description={dict.missing.text.text}
+  untranslated={untranslated}
+>
+  <main id="main" class="missing">
+    <p class="kicker">{dict.missing.kicker.text}</p>
+    <h1>{dict.missing.title.text}</h1>
+    <p>{dict.missing.text.text}</p>
+    <a class="btn" href={localeHref(locale)}>
+      {dict.missing.link.text}
+    </a>
+  </main>
+</Base>

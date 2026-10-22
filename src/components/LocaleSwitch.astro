@@ -1,0 +1,29 @@
+---
+import { LOCALES, type Locale } from '../config/whatsapp';
+import { chrome, htmlLang } from '../i18n';
+import { localeHref } from '../lib/paths';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const labels = { pt: 'PT', es: 'ES', en: 'EN' } as const;
+---
+
+<div class="locales">
+  {LOCALES.map((code) => (
+    <a
+      href={localeHref(code)}
+      data-testid={`locale-${code}`}
+      hreflang={htmlLang[code]}
+      lang={htmlLang[code]}
+      aria-current={code === locale ? 'page' : undefined}
+      data-draft={code === 'pt' ? undefined : ''}
+      title={code === 'pt' ? undefined : chrome[locale].draft.text}
+    >
+      {labels[code]}
+      {code !== 'pt' && <span class="sr-only"> {chrome[locale].draft.text}</span>}
+    </a>
+  ))}
+</div>

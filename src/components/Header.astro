@@ -1,0 +1,47 @@
+---
+import type { Locale } from '../config/whatsapp';
+import type { Dictionary } from '../i18n';
+import { chrome } from '../i18n';
+import { localeHref } from '../lib/paths';
+import LocaleSwitch from './LocaleSwitch.astro';
+
+interface Props {
+  locale: Locale;
+  dict: Dictionary;
+}
+
+const { locale, dict } = Astro.props;
+const links = [
+  { href: '#territorios', label: dict.nav.territories.text },
+  { href: '#experiencias', label: dict.nav.experiences.text },
+  { href: '#como-funciona', label: dict.nav.method.text },
+];
+---
+
+<header class="header" data-header>
+  <a class="logo" href={localeHref(locale)}>
+    MPTour
+  </a>
+  <button
+    class="menu-btn"
+    type="button"
+    data-nav-toggle
+    aria-expanded="false"
+    aria-controls="site-nav"
+  >
+    <span></span>
+    <span></span>
+    <span class="sr-only">{chrome[locale].menu.text}</span>
+  </button>
+  <nav id="site-nav" class="nav" data-nav aria-label="MPTour">
+    {links.map((link) => (
+      <a class="nav-link" href={link.href}>
+        {link.label}
+      </a>
+    ))}
+    <LocaleSwitch locale={locale} />
+    <a class="header-cta" href="#monte-seu-roteiro">
+      {dict.nav.cta.text}
+    </a>
+  </nav>
+</header>

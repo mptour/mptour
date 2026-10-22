@@ -1,7 +1,18 @@
 ---
+import HomePage from '../components/HomePage.astro';
+import { t } from '../i18n';
 import Base from '../layouts/Base.astro';
+
+const locale = 'pt' as const;
+const { dict, untranslated } = t(locale);
 ---
 
-<Base title="mptour">
-  <h1>mptour</h1>
+<Base
+  locale={locale}
+  dict={dict}
+  title={dict.meta.title.text}
+  description={dict.meta.description.text}
+  untranslated={untranslated}
+>
+  <HomePage locale={locale} dict={dict} />
 </Base>

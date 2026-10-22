@@ -1,0 +1,27 @@
+---
+import type { Dictionary } from '../i18n';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+---
+
+<section class="section" id="como-funciona" data-testid="method">
+  <div class="section-head" data-reveal>
+    <div>
+      <p class="kicker">{dict.method.kicker.text}</p>
+      <h2>{dict.method.title.text}</h2>
+    </div>
+  </div>
+  <ol class="steps">
+    {dict.method.steps.map((step, index) => (
+      <li class="step" data-reveal style={`--d:${index}`}>
+        <em>0{index + 1}</em>
+        <h3>{step.title.text}</h3>
+        <p>{step.text.text}</p>
+      </li>
+    ))}
+  </ol>
+</section>
