@@ -1,0 +1,54 @@
+---
+import type { Dictionary } from '../i18n';
+import heroVideo from '../assets/hero.mp4';
+import { stills } from '../assets/media';
+import Media from './Media.astro';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+const videoSrc = heroVideo;
+---
+
+<section class="hero" data-testid="hero">
+  <div class="hero-media" data-video-placeholder="garganta">
+    <Media
+      src={stills.hero.src}
+      alt={stills.hero.alt}
+      widths={[768, 1280, 1920]}
+      sizes="100vw"
+      priority
+      className="hero-still"
+    />
+    <video
+      class="hero-video"
+      data-hero-video
+      data-src={videoSrc}
+      muted
+      playsinline
+      loop
+      preload="none"
+      aria-hidden="true"
+    ></video>
+  </div>
+  <div class="hero-scrim"></div>
+  <div class="hero-copy">
+    <p class="eyebrow">{dict.hero.eyebrow.text}</p>
+    <h1>
+      <span>{dict.hero.titleLead.text}</span>
+      <em>{dict.hero.titleEm.text}</em>
+    </h1>
+    <p class="lede">{dict.hero.lede.text}</p>
+    <div class="hero-actions">
+      <a class="btn" data-testid="cta-primary" href="#monte-seu-roteiro">
+        {dict.hero.cta.text}
+      </a>
+      <a class="text-link" href="#experiencias">
+        {dict.hero.secondary.text}
+      </a>
+    </div>
+  </div>
+  <div class="cue" aria-hidden="true"></div>
+</section>

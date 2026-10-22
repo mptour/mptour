@@ -1,0 +1,33 @@
+---
+import { whatsappHref, type Locale } from '../config/whatsapp';
+import type { Dictionary } from '../i18n';
+
+interface Props {
+  dict: Dictionary;
+  locale: Locale;
+}
+
+const { dict, locale } = Astro.props;
+---
+
+<section class="section plan" id="monte-seu-roteiro" data-testid="plan">
+  <div class="plan-inner" data-reveal>
+    <p class="kicker">{dict.plan.kicker.text}</p>
+    <h2>{dict.plan.title.text}</h2>
+    <p class="lede">{dict.plan.text.text}</p>
+    <a
+      class="btn"
+      data-testid="cta-whatsapp"
+      href={whatsappHref(locale)}
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      {dict.plan.cta.text}
+      <span class="btn-ext" aria-hidden="true">
+        ↗
+      </span>
+      <span class="sr-only"> WhatsApp, abre em nova aba</span>
+    </a>
+    <p class="note">{dict.plan.note.text}</p>
+  </div>
+</section>

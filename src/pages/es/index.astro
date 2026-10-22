@@ -1,0 +1,18 @@
+---
+import HomePage from '../../components/HomePage.astro';
+import { t } from '../../i18n';
+import Base from '../../layouts/Base.astro';
+
+const locale = 'es' as const;
+const { dict, untranslated } = t(locale);
+---
+
+<Base
+  locale={locale}
+  dict={dict}
+  title={dict.meta.title.text}
+  description={dict.meta.description.text}
+  untranslated={untranslated}
+>
+  <HomePage locale={locale} dict={dict} />
+</Base>

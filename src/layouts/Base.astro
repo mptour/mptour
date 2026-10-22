@@ -1,0 +1,96 @@
+---
+import '../styles/global.css';
+import fraunces from '@fontsource/fraunces/files/fraunces-latin-300-normal.woff2';
+import frauncesItalic from '@fontsource/fraunces/files/fraunces-latin-300-italic.woff2';
+import sans from '@fontsource-variable/instrument-sans/files/instrument-sans-latin-wght-normal.woff2';
+import { WHATSAPP_DISPLAY, type Locale } from '../config/whatsapp';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import { chrome, htmlLang, notices, ogLocale, type Dictionary } from '../i18n';
+import { absoluteUrl } from '../lib/paths';
+
+interface Props {
+  locale: Locale;
+  dict: Dictionary;
+  title: string;
+  description: string;
+  untranslated?: boolean;
+}
+
+const { locale, dict, title, description, untranslated = false } = Astro.props;
+const notice = locale === 'pt' ? undefined : notices[locale].text;
+const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const image = absoluteUrl(`${import.meta.env.BASE_URL}og.jpg`);
+const home = absoluteUrl(import.meta.env.BASE_URL);
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'TravelAgency',
+  name: 'MPTour',
+  url: home,
+  telephone: WHATSAPP_DISPLAY,
+  areaServed: 'Foz do Iguaçu',
+  description,
+};
+---
+
+<!doctype html>
+<html lang={htmlLang[locale]}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script is:inline>
+      document.documentElement.classList.add('has-js');
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        document.documentElement.classList.add('js');
+      }
+    </script>
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {untranslated && <meta name="robots" content="noindex, follow" />}
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
+    <meta name="theme-color" content="#10241c" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={ogLocale[locale]} />
+    <meta property="og:image" content={image} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="PLACEHOLDER — Cataratas do Iguaçu" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={image} />
+    {!untranslated && (
+      <>
+        <link rel="alternate" hreflang="pt-BR" href={home} />
+        <link rel="alternate" hreflang="x-default" href={home} />
+      </>
+    )}
+    <link rel="preload" href={fraunces} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={frauncesItalic} as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href={sans} as="font" type="font/woff2" crossorigin />
+    {!untranslated && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
+  </head>
+  <body>
+    <a class="skip" href="#main">
+      {chrome[locale].skip.text}
+    </a>
+    <Header locale={locale} dict={dict} />
+    {notice && (
+      <p class="notice" data-testid="fallback-notice" lang={htmlLang[locale]}>
+        {notice}
+      </p>
+    )}
+    <slot />
+    <Footer locale={locale} dict={dict} />
+    <p class="stamp" data-testid="placeholder-ribbon">
+      Prova · PLACEHOLDER
+    </p>
+    <script>
+      import '../scripts/site.ts';
+    </script>
+  </body>
+</html>

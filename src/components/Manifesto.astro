@@ -1,0 +1,21 @@
+---
+import type { Dictionary } from '../i18n';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+---
+
+<section class="section" data-testid="manifesto" data-reveal>
+  <div class="manifesto">
+    <p class="kicker">{dict.manifesto.kicker.text}</p>
+    <blockquote class="quote">{dict.manifesto.quote.text}</blockquote>
+    <ul class="facts">
+      {dict.manifesto.facts.map((fact) => (
+        <li>{fact.text}</li>
+      ))}
+    </ul>
+  </div>
+</section>

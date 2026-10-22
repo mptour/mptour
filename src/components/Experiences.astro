@@ -1,0 +1,51 @@
+---
+import type { Dictionary } from '../i18n';
+import { focal, stills } from '../assets/media';
+import Media from './Media.astro';
+
+interface Props {
+  dict: Dictionary;
+}
+
+const { dict } = Astro.props;
+---
+
+<section class="section" id="experiencias" data-testid="experiences">
+  <div class="section-head" data-reveal>
+    <div>
+      <p class="kicker">{dict.experiences.kicker.text}</p>
+      <h2>{dict.experiences.title.text}</h2>
+    </div>
+    <p>{dict.experiences.lede.text}</p>
+  </div>
+  <div class="cards">
+    {dict.experiences.items.map((item, index) => {
+      const still = stills[item.image];
+      const wide = item.image === 'paraguay' || item.image === 'falls-wide';
+      return (
+        <a
+          class="card"
+          href="#monte-seu-roteiro"
+          data-testid="experience"
+          data-reveal
+          data-wide={wide ? '' : undefined}
+          style={`--d:${index % 3};--focal:${focal.card[item.image]}`}
+        >
+          <div class="media">
+            <Media
+              src={still.src}
+              alt={still.alt}
+              widths={[480, 800, 1100]}
+              sizes={wide ? '(min-width: 860px) 48vw, 100vw' : '(min-width: 860px) 32vw, 100vw'}
+            />
+          </div>
+          <p class="meta">
+            {item.territory.text} · {item.duration.text}
+          </p>
+          <h3>{item.title.text}</h3>
+          <span class="mark">PLACEHOLDER</span>
+        </a>
+      );
+    })}
+  </div>
+</section>
