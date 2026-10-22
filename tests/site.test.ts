@@ -1,6 +1,11 @@
 // @vitest-environment happy-dom
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { bindSite, isSlowConnection, shouldLoadHeroVideo } from '../src/scripts/site';
+import {
+  HERO_NARROW_MEDIA,
+  bindSite,
+  isSlowConnection,
+  shouldLoadHeroVideo,
+} from '../src/scripts/site';
 
 const fixture = `
   <header data-header>
@@ -25,8 +30,8 @@ function installView(flags: {
     const matches =
       query === '(prefers-reduced-motion: reduce)'
         ? flags.reduce
-        : query === '(min-width: 1100px)'
-          ? flags.wide
+        : query === HERO_NARROW_MEDIA
+          ? !flags.wide
           : false;
     return {
       matches,
@@ -77,10 +82,10 @@ function installView(flags: {
 }
 
 describe('shouldLoadHeroVideo', () => {
-  it('loads only on a wide screen that is not saving data, reducing motion, or slow', () => {
+  it('loads on any width that is not saving data, reducing motion, or slow', () => {
     expect(shouldLoadHeroVideo({ reduce: false, wide: true, saveData: false })).toBe(true);
+    expect(shouldLoadHeroVideo({ reduce: false, wide: false, saveData: false })).toBe(true);
     expect(shouldLoadHeroVideo({ reduce: true, wide: true, saveData: false })).toBe(false);
-    expect(shouldLoadHeroVideo({ reduce: false, wide: false, saveData: false })).toBe(false);
     expect(shouldLoadHeroVideo({ reduce: false, wide: true, saveData: true })).toBe(false);
     expect(shouldLoadHeroVideo({ reduce: false, wide: true, saveData: false, slow: true })).toBe(
       false,
@@ -140,7 +145,7 @@ describe('bindSite', () => {
     expect(document.querySelector('[data-reveal]')?.classList.contains('is-in')).toBe(true);
   });
 
-  it('assigns the hero clip only when the screen is wide and idle', () => {
+  it('assigns the hero clip when the screen is idle', () => {
     document.body.innerHTML = fixture;
     const view = installView({ reduce: false, wide: true });
     bindSite(document, view);
@@ -148,16 +153,58 @@ describe('bindSite', () => {
     expect(video?.getAttribute('src') ?? video?.src ?? '').toContain('clip.mp4');
   });
 
-  it('leaves the hero clip unloaded on a narrow or data-saver screen', () => {
+  it('assigns the single source on a narrow screen when no vertical file is set', () => {
     document.body.innerHTML = fixture;
     const narrow = installView({ reduce: false, wide: false });
     bindSite(document, narrow);
-    expect(document.querySelector('[data-hero-video]')?.getAttribute('src')).toBeNull();
+    expect(document.querySelector('[data-hero-video]')?.getAttribute('src') ?? '').toContain(
+      'clip.mp4',
+    );
+  });
 
+  it('leaves the hero clip unloaded on a data-saver screen', () => {
     document.body.innerHTML = fixture;
     const saver = installView({ reduce: false, wide: true, saveData: true });
     bindSite(document, saver);
     expect(document.querySelector('[data-hero-video]')?.getAttribute('src')).toBeNull();
+  });
+
+  it('plays the vertical montage on a narrow screen and the pause control still stops it', () => {
+    document.body.innerHTML = `
+      <img class="hero-still" src="/assets/hero.jpg" />
+      <video
+        data-hero-video
+        data-src-webm="/media/hero.webm"
+        data-src-mp4="/media/hero.mp4"
+        data-src-webm-narrow="/media/hero-narrow.webm"
+        data-src-mp4-narrow="/media/hero-narrow.mp4"
+        aria-hidden="true"
+      ></video>
+      <button
+        type="button"
+        data-hero-playback
+        data-label-pause="Pausar vídeo"
+        data-label-play="Tocar vídeo"
+        hidden
+        aria-pressed="false"
+      >
+        Pausar vídeo
+      </button>
+    `;
+    const view = installView({ reduce: false, wide: false, effectiveType: '4g' });
+    bindSite(document, view);
+    const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+    const button = document.querySelector<HTMLButtonElement>('[data-hero-playback]');
+    expect(
+      [...(video?.querySelectorAll('source') ?? [])].map((node) => node.getAttribute('src')),
+    ).toEqual(['/media/hero-narrow.webm', '/media/hero-narrow.mp4']);
+    expect(video?.getAttribute('src')).toBeNull();
+    expect(button?.hidden).toBe(false);
+    expect(video?.paused).toBe(false);
+    button?.click();
+    expect(video?.paused).toBe(true);
+    expect(button?.textContent?.trim()).toBe('Tocar vídeo');
+    expect(button?.getAttribute('aria-pressed')).toBe('true');
   });
 
   it('leaves the hero clip unloaded on a slow connection', () => {
@@ -218,6 +265,32 @@ describe('bindSite', () => {
     expect(video?.paused).toBe(false);
     expect(button?.textContent?.trim()).toBe('Pausar vídeo');
     expect(button?.getAttribute('aria-pressed')).toBe('false');
+  });
+
+  it('shows the play label when autoplay is blocked', async () => {
+    document.body.innerHTML = `
+      <video data-hero-video data-src="/clip.mp4" aria-hidden="true"></video>
+      <button
+        type="button"
+        data-hero-playback
+        data-label-pause="Pausar vídeo"
+        data-label-play="Tocar vídeo"
+        hidden
+        aria-pressed="false"
+      >
+        Pausar vídeo
+      </button>
+    `;
+    const view = installView({ reduce: false, wide: false, effectiveType: '4g' });
+    const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+    if (video) video.play = () => Promise.reject(new Error('blocked'));
+    bindSite(document, view);
+    await Promise.resolve();
+    const button = document.querySelector<HTMLButtonElement>('[data-hero-playback]');
+    expect(video?.paused).toBe(true);
+    expect(button?.hidden).toBe(false);
+    expect(button?.textContent?.trim()).toBe('Tocar vídeo');
+    expect(button?.getAttribute('aria-pressed')).toBe('true');
   });
 
   it('keeps the playback control hidden when the clip is not loaded', () => {

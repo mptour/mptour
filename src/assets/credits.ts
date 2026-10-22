@@ -3,6 +3,7 @@ export interface Credit {
   author: string;
   license: string;
   href: string;
+  kind?: 'photo' | 'video';
 }
 
 /** Provisional photographs. Not MPTour assets. One entry per file on the home. */
@@ -72,5 +73,33 @@ export const IMAGE_CREDITS: readonly Credit[] = [
     author: 'Josep M. Gracia',
     license: 'CC BY-SA 4.0',
     href: 'https://commons.wikimedia.org/wiki/File:IG_-_Detail_of_Devil%27s_Throat_from_the_Brazilian_side_of_Iguazu_Falls,_2023.jpg',
+  },
+];
+
+/**
+ * Sources cut into the hero montage. Itaipu and the Marco are Pexels stills:
+ * no free video of those places was on Pexels, Pixabay, or Mixkit.
+ */
+export const VIDEO_CREDITS: readonly Credit[] = [
+  {
+    kind: 'video',
+    subject: 'Cataratas do Iguaçu',
+    author: 'Mixkit',
+    license: 'Mixkit Stock Video Free License',
+    href: 'https://mixkit.co/free-stock-video/iguazu-falls-landscape-11060/',
+  },
+  {
+    kind: 'photo',
+    subject: 'Itaipu (foto no clipe)',
+    author: 'Daniel Emmerick',
+    license: 'Pexels License',
+    href: 'https://www.pexels.com/photo/itaipu-dam-on-parana-river-19905690/',
+  },
+  {
+    kind: 'photo',
+    subject: 'Marco das Três Fronteiras (foto no clipe)',
+    author: 'João Saplak',
+    license: 'Pexels License',
+    href: 'https://www.pexels.com/photo/directional-signs-for-marco-das-tres-fronteiras-19240302/',
   },
 ];

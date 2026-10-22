@@ -4,17 +4,40 @@ type NetInfo = { saveData?: boolean; effectiveType?: string };
 
 const SLOW_CONNECTIONS = new Set(['slow-2g', '2g', '3g']);
 
+/** Phones and portrait tablets. Landscape tablets stay on the 16:9 file. */
+export const HERO_NARROW_MEDIA = '(max-width: 839px)';
+
 export function isSlowConnection(effectiveType: string | undefined): boolean {
   return typeof effectiveType === 'string' && SLOW_CONNECTIONS.has(effectiveType);
 }
 
 export function shouldLoadHeroVideo(input: {
   reduce: boolean;
-  wide: boolean;
+  wide?: boolean;
   saveData: boolean;
   slow?: boolean;
 }): boolean {
-  return !input.reduce && input.wide && !input.saveData && !input.slow;
+  return !input.reduce && !input.saveData && !input.slow;
+}
+
+export function pickHeroSources(input: {
+  wide: boolean;
+  dataset: {
+    srcWebm?: string;
+    srcMp4?: string;
+    srcWebmNarrow?: string;
+    srcMp4Narrow?: string;
+    src?: string;
+  };
+}): { webm?: string; mp4?: string; single?: string } {
+  const webm = input.wide
+    ? input.dataset.srcWebm
+    : (input.dataset.srcWebmNarrow ?? input.dataset.srcWebm);
+  const mp4 = input.wide
+    ? input.dataset.srcMp4
+    : (input.dataset.srcMp4Narrow ?? input.dataset.srcMp4);
+  if (webm || mp4) return { webm, mp4 };
+  return { single: input.dataset.src };
 }
 
 function videoSource(doc: Document, src: string, type: string): HTMLSourceElement {
@@ -86,7 +109,7 @@ export function bindSite(doc: Document, view: View): void {
   view.addEventListener('scroll', setScrolled, { passive: true });
 
   const reduce = view.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const wide = view.matchMedia('(min-width: 1100px)').matches;
+  const wide = !view.matchMedia(HERO_NARROW_MEDIA).matches;
   const connection = (view.navigator as Navigator & { connection?: NetInfo }).connection;
   const video = doc.querySelector<HTMLVideoElement>('[data-hero-video]');
 
@@ -100,9 +123,10 @@ export function bindSite(doc: Document, view: View): void {
     })
   ) {
     const start = () => {
-      const webm = video.dataset.srcWebm;
-      const mp4 = video.dataset.srcMp4;
-      const single = video.dataset.src;
+      const picked = pickHeroSources({ wide, dataset: video.dataset });
+      const webm = picked.webm;
+      const mp4 = picked.mp4;
+      const single = picked.single;
       if (!webm && !mp4 && !single) return;
 
       const still = doc.querySelector<HTMLImageElement>('.hero-still');
@@ -122,7 +146,10 @@ export function bindSite(doc: Document, view: View): void {
       }
 
       const pending = video.play?.();
-      void pending?.catch?.(() => undefined);
+      void pending?.catch?.(() => {
+        const button = doc.querySelector<HTMLButtonElement>('[data-hero-playback]');
+        if (button) reflectPlayback(video, button);
+      });
     };
     const idle = () => {
       if (typeof view.requestIdleCallback === 'function') {

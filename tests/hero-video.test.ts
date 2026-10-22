@@ -86,6 +86,8 @@ describe('hero video', () => {
     const webm = video?.getAttribute('data-src-webm') ?? '';
     expect(mp4).toBe('/media/hero.mp4');
     expect(webm).toBe('/media/hero.webm');
+    expect(video?.getAttribute('data-src-mp4-narrow')).toBe('/media/hero-narrow.mp4');
+    expect(video?.getAttribute('data-src-webm-narrow')).toBe('/media/hero-narrow.webm');
 
     for (const url of [mp4, webm]) {
       const file = path.join(rootDir, 'dist', url.slice(1));
@@ -124,6 +126,8 @@ describe('hero video', () => {
     const video = based.querySelector('[data-testid="hero"] video[data-hero-video]');
     expect(video?.getAttribute('data-src-mp4')).toBe('/mptour/media/hero.mp4');
     expect(video?.getAttribute('data-src-webm')).toBe('/mptour/media/hero.webm');
+    expect(video?.getAttribute('data-src-mp4-narrow')).toBe('/mptour/media/hero-narrow.mp4');
+    expect(video?.getAttribute('data-src-webm-narrow')).toBe('/mptour/media/hero-narrow.webm');
     expect(video?.hasAttribute('src')).toBe(false);
   });
 });
