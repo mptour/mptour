@@ -32,6 +32,22 @@ BASE_PATH=/mptour npm run preview
 
 Português é o padrão, em `/`. `/es/` e `/en/` existem, mostram o texto em português e um aviso de que a tradução está em preparação, e saem com `noindex`. Os dicionários vazios estão em `src/i18n/es.ts` e `src/i18n/en.ts`.
 
+## Como testar
+
+O site usa `trailingSlash: 'always'`. Sem a barra no final, o preview não entrega a página.
+
+```bash
+npm run build
+npm run preview
+```
+
+- http://127.0.0.1:4321/
+- http://127.0.0.1:4321/es/
+- http://127.0.0.1:4321/en/
+- http://127.0.0.1:4321/creditos/
+
+A navegação aponta para `/#territorios`, `/#experiencias`, `/#como-funciona` e `/#monte-seu-roteiro` (em `/es/` e `/en/`, o mesmo com o prefixo do idioma). Não existe uma página solta para essas seções.
+
 ## Fotografias
 
-São arquivos provisórios do Wikimedia Commons, com crédito no rodapé e no alt (`PLACEHOLDER — …`). O hero usa uma foto da Garganta do Diabo e, em telas largas, um clipe mudo de sete segundos só depois do carregamento. Trocar a mídia é substituir os arquivos em `src/assets/` e `public/og.jpg`.
+Arquivos provisórios do Wikimedia Commons, um por uso: o mosaico e os cards não repetem a mesma foto. Os créditos ficam em `/creditos/`, fora do rodapé. O alt continua marcado com `PLACEHOLDER`. O hero é uma foto grande da Garganta do Diabo, sem clipe de 1280×720. Trocar a mídia é substituir os arquivos em `src/assets/` e `public/og.jpg`.

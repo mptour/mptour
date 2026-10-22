@@ -19,7 +19,10 @@ interface Props {
 
 const { locale, dict, title, description, untranslated = false } = Astro.props;
 const notice = locale === 'pt' ? undefined : notices[locale].text;
-const canonical = new URL(Astro.url.pathname, Astro.site).href;
+const canonicalPath = Astro.url.pathname.includes('404')
+  ? import.meta.env.BASE_URL
+  : Astro.url.pathname;
+const canonical = absoluteUrl(canonicalPath);
 const image = absoluteUrl(`${import.meta.env.BASE_URL}og.jpg`);
 const home = absoluteUrl(import.meta.env.BASE_URL);
 const schema = {
@@ -49,7 +52,7 @@ const schema = {
     {untranslated && <meta name="robots" content="noindex, follow" />}
     <link rel="canonical" href={canonical} />
     <link rel="icon" href={`${import.meta.env.BASE_URL}favicon.svg`} type="image/svg+xml" />
-    <meta name="theme-color" content="#10241c" />
+    <meta name="theme-color" content="#0f2219" />
     <meta property="og:title" content={title} />
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
@@ -85,12 +88,10 @@ const schema = {
       </p>
     )}
     <slot />
-    <Footer locale={locale} dict={dict} />
-    <p class="stamp" data-testid="placeholder-ribbon">
-      Prova · PLACEHOLDER
-    </p>
+    <Footer locale={locale} dict={dict} untranslated={untranslated} />
     <script>
-      import '../scripts/site.ts';
+      import { bindSite } from '../scripts/site.ts';
+      bindSite(document, window);
     </script>
   </body>
 </html>

@@ -21,7 +21,7 @@ const { dict } = Astro.props;
   <div class="cards">
     {dict.experiences.items.map((item, index) => {
       const still = stills[item.image];
-      const wide = item.image === 'paraguay' || item.image === 'falls-wide';
+      const wide = item.image === 'exp-bridge' || item.image === 'exp-curtain';
       return (
         <a
           class="card"
@@ -36,14 +36,13 @@ const { dict } = Astro.props;
               src={still.src}
               alt={still.alt}
               widths={[480, 800, 1100]}
-              sizes={wide ? '(min-width: 860px) 48vw, 100vw' : '(min-width: 860px) 32vw, 100vw'}
+              sizes={wide ? '(min-width: 860px) 58vw, 100vw' : '(min-width: 860px) 33vw, 100vw'}
             />
           </div>
           <p class="meta">
             {item.territory.text} · {item.duration.text}
           </p>
           <h3>{item.title.text}</h3>
-          <span class="mark">PLACEHOLDER</span>
         </a>
       );
     })}

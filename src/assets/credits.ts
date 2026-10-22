@@ -1,49 +1,76 @@
 export interface Credit {
+  subject: string;
   author: string;
   license: string;
   href: string;
 }
 
-/** Provisional photographs. Not MPTour assets. */
+/** Provisional photographs. Not MPTour assets. One entry per file on the home. */
 export const IMAGE_CREDITS: readonly Credit[] = [
   {
-    author: 'Pierre André Leclercq',
-    license: 'CC BY-SA 4.0',
-    href: 'https://commons.wikimedia.org/wiki/File:Cataractes_d%27_Iguazu.jpg',
+    subject: 'Garganta do Diabo',
+    author: 'P. Hughes',
+    license: 'CC BY 4.0',
+    href: 'https://commons.wikimedia.org/wiki/File:Iguazu_Falls_-_Devil%27s_Throat.jpg',
   },
   {
-    author: 'Pierre André Leclercq',
-    license: 'CC BY-SA 4.0',
-    href: 'https://commons.wikimedia.org/wiki/File:Cataractes_d%27_Iguazu_(2).jpg',
+    subject: 'Passarela brasileira',
+    author: 'Murray Foubister',
+    license: 'CC BY-SA 2.0',
+    href: 'https://commons.wikimedia.org/wiki/File:Iguassu_Falls,_Brazil-Argentina_-_walkway_to_the_top_of_the_falls_on_the_Brazilian_side_-_(24748952481).jpg',
   },
   {
+    subject: 'Salto San Martín',
     author: 'Falk2',
     license: 'CC BY-SA 4.0',
-    href: 'https://commons.wikimedia.org/wiki/File:J37_873_Garganta_del_Diablo.jpg',
+    href: 'https://commons.wikimedia.org/wiki/File:J31_097_Salto_San_Mart%C3%ADn_bis_Adan.jpg',
   },
   {
-    author: 'Arian Zwegers',
+    subject: 'Itaipu',
+    author: 'Jonas de Carvalho',
+    license: 'CC BY-SA 2.0',
+    href: 'https://commons.wikimedia.org/wiki/File:Itaipu_geral.jpg',
+  },
+  {
+    subject: 'Ponte da Amizade',
+    author: 'Rodrigo Yoshioka',
     license: 'CC BY 2.0',
-    href: 'https://commons.wikimedia.org/wiki/File:Iguazu_Falls,_Salto_San_Martin_(15906063096).jpg',
+    href: 'https://commons.wikimedia.org/wiki/File:Ponte_da_Amizade_in_Foz_do_Iguacu.jpg',
   },
   {
-    author: 'Arian Zwegers',
-    license: 'CC BY 2.0',
-    href: 'https://commons.wikimedia.org/wiki/File:Iguazu_Falls,_Garganta_del_Diablo.webm',
-  },
-  {
-    author: 'acediscovery',
+    subject: 'Três Fronteiras',
+    author: 'Horacio Cambeiro',
     license: 'CC BY 4.0',
-    href: 'https://commons.wikimedia.org/wiki/File:Itaipu_Dam,_aerial_photograph.jpg',
+    href: 'https://commons.wikimedia.org/wiki/File:Triple_frontera_monument_(Argentina)_%C2%B7_Hito_Tres_Fronteras_(Puerto_Iguaz%C3%BA,_Argentina).jpg',
   },
   {
-    author: 'Diego3336',
-    license: 'CC BY 2.0',
-    href: 'https://commons.wikimedia.org/wiki/File:Parana_River_Viewed_from_the_%27Ponte_da_Amizade%27_-_2017-09-19.jpg',
+    subject: 'Borda do San Martín',
+    author: 'Falk2',
+    license: 'CC BY-SA 4.0',
+    href: 'https://commons.wikimedia.org/wiki/File:J37_932_Salto_San_Mart%C3%ADn_(Richtung_Salto_Floriano).jpg',
   },
   {
-    author: 'Dario Alpern',
+    subject: 'Passarela sobre a queda',
+    author: 'Murray Foubister',
+    license: 'CC BY-SA 2.0',
+    href: 'https://commons.wikimedia.org/wiki/File:Iguassu_Falls,_Brazil-Argentina_-_spectacular_walkways_-_(24216417843).jpg',
+  },
+  {
+    subject: 'Vertedouro de Itaipu',
+    author: 'Cmasi',
+    license: 'CC BY-SA 4.0',
+    href: 'https://commons.wikimedia.org/wiki/File:Itaipu_Dam_4084_filtered_(1).jpg',
+  },
+  {
+    subject: 'Ponte, lado paraguaio',
+    author: 'Ekem',
     license: 'CC BY-SA 3.0',
-    href: 'https://commons.wikimedia.org/wiki/File:Triple_frontera_Argentina,_Brasil_y_Paraguay.jpg',
+    href: 'https://commons.wikimedia.org/wiki/File:Ciudad_del_Este_puente_de_la_Amistad.jpg',
+  },
+  {
+    subject: 'Cortina da Garganta',
+    author: 'Josep M. Gracia',
+    license: 'CC BY-SA 4.0',
+    href: 'https://commons.wikimedia.org/wiki/File:IG_-_Detail_of_Devil%27s_Throat_from_the_Brazilian_side_of_Iguazu_Falls,_2023.jpg',
   },
 ];

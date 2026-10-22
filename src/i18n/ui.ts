@@ -23,15 +23,18 @@ export const chrome = {
     skip: ph('Ir para o conteúdo'),
     menu: ph('Menu'),
     draft: ph('Em preparação'),
+    newTab: ph('WhatsApp, abre em nova aba'),
   },
   es: {
     skip: ph('Saltar al contenido'),
     menu: ph('Menú'),
     draft: ph('En preparación'),
+    newTab: ph('WhatsApp, se abre en una pestaña nueva'),
   },
   en: {
     skip: ph('Skip to content'),
     menu: ph('Menu'),
     draft: ph('In preparation'),
+    newTab: ph('WhatsApp, opens in a new tab'),
   },
-} satisfies Record<Locale, { skip: Copy; menu: Copy; draft: Copy }>;
+} satisfies Record<Locale, { skip: Copy; menu: Copy; draft: Copy; newTab: Copy }>;

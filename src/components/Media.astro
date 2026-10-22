@@ -8,10 +8,11 @@ interface Props {
   sizes: string;
   widths: number[];
   priority?: boolean;
+  quality?: number;
   className?: string;
 }
 
-const { src, alt, sizes, widths, priority = false, className } = Astro.props;
+const { src, alt, sizes, widths, priority = false, quality, className } = Astro.props;
 ---
 
 <Picture
@@ -21,7 +22,7 @@ const { src, alt, sizes, widths, priority = false, className } = Astro.props;
   sizes={sizes}
   formats={['avif']}
   fallbackFormat="jpeg"
-  quality={priority ? 68 : 62}
+  quality={quality ?? (priority ? 72 : 64)}
   loading={priority ? 'eager' : 'lazy'}
   fetchpriority={priority ? 'high' : 'auto'}
   decoding={priority ? 'sync' : 'async'}

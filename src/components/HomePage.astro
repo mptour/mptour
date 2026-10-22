@@ -11,12 +11,13 @@ import Territories from './Territories.astro';
 interface Props {
   locale: Locale;
   dict: Dictionary;
+  untranslated?: boolean;
 }
 
-const { locale, dict } = Astro.props;
+const { locale, dict, untranslated = false } = Astro.props;
 ---
 
-<main id="main">
+<main id="main" lang={untranslated ? 'pt-BR' : undefined}>
   <Hero dict={dict} />
   <Manifesto dict={dict} />
   <Territories dict={dict} />

@@ -1,6 +1,5 @@
 ---
 import type { Dictionary } from '../i18n';
-import heroVideo from '../assets/hero.mp4';
 import { stills } from '../assets/media';
 import Media from './Media.astro';
 
@@ -9,29 +8,19 @@ interface Props {
 }
 
 const { dict } = Astro.props;
-const videoSrc = heroVideo;
 ---
 
 <section class="hero" data-testid="hero">
-  <div class="hero-media" data-video-placeholder="garganta">
+  <div class="hero-media">
     <Media
       src={stills.hero.src}
       alt={stills.hero.alt}
-      widths={[768, 1280, 1920]}
+      widths={[1280, 1920, 2560]}
       sizes="100vw"
       priority
+      quality={78}
       className="hero-still"
     />
-    <video
-      class="hero-video"
-      data-hero-video
-      data-src={videoSrc}
-      muted
-      playsinline
-      loop
-      preload="none"
-      aria-hidden="true"
-    ></video>
   </div>
   <div class="hero-scrim"></div>
   <div class="hero-copy">
