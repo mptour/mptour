@@ -34,16 +34,23 @@ function walk(dir: string): string[] {
 }
 
 describe('placeholders, i18n and base path', () => {
-  it('marks images and copy as placeholders and lists the experiences without prices', () => {
+  it('keeps visitor copy free of the PLACEHOLDER marker and lists the experiences without prices', () => {
     const page = readPage('dist', 'index.html');
     const html = page.toString();
 
     expect(page.querySelector('[data-testid="placeholder-ribbon"]')).toBeNull();
     expect(page.querySelector('title')?.text).not.toMatch(/PLACEHOLDER/);
-    expect(page.querySelector('meta[name="description"]')?.getAttribute('content')).toMatch(
+    expect(page.querySelector('meta[name="description"]')?.getAttribute('content')).not.toMatch(
       /PLACEHOLDER/,
     );
-    expect(page.querySelector('[data-testid="footer"]')?.text).toMatch(/PLACEHOLDER/);
+    expect(
+      page.querySelector('meta[property="og:description"]')?.getAttribute('content'),
+    ).not.toMatch(/PLACEHOLDER/);
+    const ogAlt =
+      page.querySelector('meta[property="og:image:alt"]')?.getAttribute('content') ?? '';
+    expect(ogAlt).not.toMatch(/PLACEHOLDER/);
+    expect(ogAlt.length).toBeGreaterThan(10);
+    expect(page.querySelector('[data-testid="footer"]')?.text).not.toMatch(/PLACEHOLDER/);
     for (const node of page.querySelectorAll(
       '[data-testid="experience"], [data-testid="territory"]',
     )) {
@@ -68,7 +75,9 @@ describe('placeholders, i18n and base path', () => {
     expect(images.length).toBeGreaterThan(0);
     for (const image of images) {
       expect(image.getAttribute('data-placeholder')).toBe('image');
-      expect(image.getAttribute('alt') ?? '').toMatch(/^PLACEHOLDER/);
+      const alt = image.getAttribute('alt') ?? '';
+      expect(alt).not.toMatch(/PLACEHOLDER/);
+      expect(alt.trim().length).toBeGreaterThan(8);
     }
 
     expect(page.querySelectorAll('[data-testid="territory"]')).toHaveLength(5);
@@ -185,6 +194,7 @@ describe('placeholders, i18n and base path', () => {
 
   it('never canonicalizes the missing page and keeps internal routes real', () => {
     const missing = readPage('dist', '404.html');
+    expect(missing.toString()).not.toMatch(/PLACEHOLDER/);
     const canonical = missing.querySelector('link[rel="canonical"]')?.getAttribute('href') ?? '';
     expect(canonical).toBe('https://mptour.github.io/');
     expect(canonical).not.toContain('404');

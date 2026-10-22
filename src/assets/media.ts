@@ -18,20 +18,53 @@ export interface Still {
 
 /**
  * Provisional Wikimedia stills, not MPTour photography.
- * Alt text stays marked. Each file is used once — mosaic and cards do not share a photo.
+ * Alt text describes what each photo shows. Each file is used once — mosaic and cards do not share a photo.
  */
 export const stills = {
-  hero: { src: hero, alt: 'PLACEHOLDER — Garganta do Diabo, Cataratas do Iguaçu' },
-  'falls-br': { src: fallsBr, alt: 'PLACEHOLDER — passarela brasileira, Cataratas do Iguaçu' },
-  'falls-ar': { src: fallsAr, alt: 'PLACEHOLDER — Salto San Martín, lado argentino' },
-  itaipu: { src: itaipu, alt: 'PLACEHOLDER — Usina de Itaipu' },
-  paraguay: { src: paraguay, alt: 'PLACEHOLDER — Ponte da Amizade, Foz do Iguaçu' },
-  frontier: { src: frontier, alt: 'PLACEHOLDER — marco das Três Fronteiras' },
-  'exp-san-martin': { src: expSanMartin, alt: 'PLACEHOLDER — borda do Salto San Martín' },
-  'exp-walkway': { src: expWalkway, alt: 'PLACEHOLDER — passarela sobre as cataratas' },
-  'exp-itaipu': { src: expItaipu, alt: 'PLACEHOLDER — vertedouro de Itaipu' },
-  'exp-bridge': { src: expBridge, alt: 'PLACEHOLDER — ponte entre Foz do Iguaçu e Ciudad del Este' },
-  'exp-curtain': { src: expCurtain, alt: 'PLACEHOLDER — cortina da Garganta do Diabo' },
+  hero: {
+    src: hero,
+    alt: 'Garganta do Diabo: água branca caindo em névoa sob nuvens, com mata no horizonte',
+  },
+  'falls-br': {
+    src: fallsBr,
+    alt: 'Passarela com pessoas sobre o rio marrom, cortinas de queda e névoa ao fundo, lado brasileiro',
+  },
+  'falls-ar': {
+    src: fallsAr,
+    alt: 'Saltos das Cataratas em meio à mata verde, lado argentino',
+  },
+  itaipu: {
+    src: itaipu,
+    alt: 'Vista aérea da barragem curva de Itaipu, vertedouro com água branca e lago azul',
+  },
+  paraguay: {
+    src: paraguay,
+    alt: 'Ponte da Amizade com ônibus, o rio e um morro verde ao fundo',
+  },
+  frontier: {
+    src: frontier,
+    alt: 'Marco branco com os escudos de Paraguai, Argentina e Brasil, rio e árvores',
+  },
+  'exp-san-martin': {
+    src: expSanMartin,
+    alt: 'Rio marrom e pedras na borda do Salto San Martín, mata ao fundo',
+  },
+  'exp-walkway': {
+    src: expWalkway,
+    alt: 'Passarela metálica molhada com uma pessoa, quedas e névoa',
+  },
+  'exp-itaipu': {
+    src: expItaipu,
+    alt: 'Face de concreto da barragem de Itaipu sob céu nublado, rio embaixo',
+  },
+  'exp-bridge': {
+    src: expBridge,
+    alt: 'Ponte da Amizade do lado paraguaio, caminhões, rio e Ciudad del Este',
+  },
+  'exp-curtain': {
+    src: expCurtain,
+    alt: 'Cortina da Garganta do Diabo, água branca e névoa, mata no topo',
+  },
 } satisfies Record<string, Still>;
 
 /** Crop the same still differently in the mosaic and in the cards. */
