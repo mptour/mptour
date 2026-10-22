@@ -1,0 +1,7 @@
+dist
+dist-base
+node_modules
+.astro
+package-lock.json
+public/og.jpg
+src/assets

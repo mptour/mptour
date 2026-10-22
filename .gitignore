@@ -1,0 +1,11 @@
+node_modules/
+dist/
+dist-base/
+.astro/
+.lighthouseci/
+*.log
+.env
+.env.*
+*_local*
+_tmp-*
+.DS_Store
