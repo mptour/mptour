@@ -1,6 +1,6 @@
 ---
 import { LOCALES, type Locale } from '../config/whatsapp';
-import { chrome, htmlLang } from '../i18n';
+import { chrome, htmlLang, isTranslated } from '../i18n';
 import { localeHref } from '../lib/paths';
 
 interface Props {
@@ -19,11 +19,11 @@ const labels = { pt: 'PT', es: 'ES', en: 'EN' } as const;
       hreflang={htmlLang[code]}
       lang={htmlLang[code]}
       aria-current={code === locale ? 'page' : undefined}
-      data-draft={code === 'pt' ? undefined : ''}
-      title={code === 'pt' ? undefined : chrome[locale].draft.text}
+      data-draft={isTranslated(code) ? undefined : ''}
+      title={isTranslated(code) ? undefined : chrome[locale].draft.text}
     >
       {labels[code]}
-      {code !== 'pt' && <span class="sr-only"> {chrome[locale].draft.text}</span>}
+      {!isTranslated(code) && <span class="sr-only"> {chrome[locale].draft.text}</span>}
     </a>
   ))}
 </div>

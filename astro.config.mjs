@@ -27,7 +27,12 @@ export default defineConfig({
     sitemap({
       filter: (page) => {
         const { pathname } = new URL(page);
-        return pathname === '/' || pathname === '/mptour/';
+        return (
+          pathname === '/' ||
+          pathname === '/es/' ||
+          pathname === '/mptour/' ||
+          pathname === '/mptour/es/'
+        );
       },
     }),
   ],

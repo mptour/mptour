@@ -105,11 +105,14 @@ describe('placeholders, i18n and base path', () => {
 
   it('names photos and videos on the credits link, matching the credits page title', () => {
     const expected = 'Créditos das fotos e dos vídeos';
-    for (const page of ['index.html', 'es/index.html', 'en/index.html']) {
+    for (const page of ['index.html', 'en/index.html']) {
       const link = readPage('dist', page).querySelector('[data-testid="credits-link"]');
       expect(link?.getAttribute('href'), page).toMatch(/\/creditos\/$/);
       expect(link?.text.trim(), page).toBe(expected);
     }
+    const esLink = readPage('dist', 'es/index.html').querySelector('[data-testid="credits-link"]');
+    expect(esLink?.getAttribute('href')).toMatch(/\/creditos\/$/);
+    expect(esLink?.text.trim()).toBe('Créditos de las fotos y los videos');
 
     const credits = readPage('dist', 'creditos/index.html');
     expect(credits.querySelector('title')?.text.trim()).toBe(expected);
@@ -122,40 +125,49 @@ describe('placeholders, i18n and base path', () => {
   it('says photos and videos are still provisional in the footer sentence', () => {
     const expected =
       'As fotos e os vídeos ainda são provisórios. O número acima é o nosso WhatsApp.';
-    for (const page of ['index.html', 'es/index.html', 'en/index.html', 'creditos/index.html']) {
+    for (const page of ['index.html', 'en/index.html', 'creditos/index.html']) {
       const footer = readPage('dist', page).querySelector('[data-testid="footer"]');
       expect(footer?.text, page).toContain(expected);
     }
+    expect(
+      readPage('dist', 'es/index.html').querySelector('[data-testid="footer"]')?.text,
+    ).toContain(
+      'Las fotos y los videos todavía son provisorios. El número de arriba es nuestro WhatsApp.',
+    );
   });
 
-  it('publishes ES and EN as Portuguese fallbacks, with locale-specific WhatsApp text', () => {
-    for (const locale of ['es', 'en'] as const) {
-      const page = readPage('dist', `${locale}/index.html`);
-      expect(page.querySelector('html')?.getAttribute('lang')).toBe(locale);
-      expect(page.querySelector('#main')?.getAttribute('lang')).toBe('pt-BR');
-      expect(page.querySelector('[data-testid="fallback-notice"]')).toBeTruthy();
-      expect(page.querySelector('meta[name="robots"]')?.getAttribute('content')).toMatch(/noindex/);
-      const href = page.querySelector('[data-testid="cta-whatsapp"]')?.getAttribute('href') ?? '';
-      expect(new URL(href).searchParams.get('text')).toBe(WHATSAPP_MESSAGE[locale]);
-      const newTab = page.querySelector('[data-testid="cta-whatsapp"] .sr-only')?.text ?? '';
-      expect(newTab).toBe(
-        locale === 'es'
-          ? ' WhatsApp, se abre en una pestaña nueva'
-          : ' WhatsApp, opens in a new tab',
-      );
-      expect(page.querySelectorAll('.nav-link').map((node) => node.getAttribute('href'))).toEqual([
-        `/${locale}/#territorios`,
-        `/${locale}/#experiencias`,
-        `/${locale}/#como-funciona`,
-      ]);
-    }
+  it('publishes EN as a Portuguese fallback, with locale-specific WhatsApp text', () => {
+    const page = readPage('dist', 'en/index.html');
+    expect(page.querySelector('html')?.getAttribute('lang')).toBe('en');
+    expect(page.querySelector('#main')?.getAttribute('lang')).toBe('pt-BR');
+    expect(page.querySelector('[data-testid="fallback-notice"]')).toBeTruthy();
+    expect(page.querySelector('meta[name="robots"]')?.getAttribute('content')).toMatch(/noindex/);
+    const href = page.querySelector('[data-testid="cta-whatsapp"]')?.getAttribute('href') ?? '';
+    expect(new URL(href).searchParams.get('text')).toBe(WHATSAPP_MESSAGE.en);
+    expect(page.querySelector('[data-testid="cta-whatsapp"] .sr-only')?.text).toBe(
+      ' WhatsApp, opens in a new tab',
+    );
+    expect(page.querySelectorAll('.nav-link').map((node) => node.getAttribute('href'))).toEqual([
+      '/en/#territorios',
+      '/en/#experiencias',
+      '/en/#como-funciona',
+    ]);
+
+    const es = readPage('dist', 'es/index.html');
+    expect(es.querySelector('[data-testid="fallback-notice"]')).toBeNull();
+    expect(es.querySelector('meta[name="robots"]')).toBeNull();
+    expect(es.querySelector('#main')?.getAttribute('lang')).toBeUndefined();
+    const esHref = es.querySelector('[data-testid="cta-whatsapp"]')?.getAttribute('href') ?? '';
+    expect(new URL(esHref).searchParams.get('text')).toBe(WHATSAPP_MESSAGE.es);
+    expect(es.querySelector('[data-testid="cta-whatsapp"] .sr-only')?.text).toBe(
+      ' WhatsApp, se abre en una pestaña nueva',
+    );
 
     const home = readPage('dist', 'index.html');
     const langs = home
       .querySelectorAll('link[rel="alternate"]')
       .map((link) => link.getAttribute('hreflang'));
-    expect(langs).toEqual(expect.arrayContaining(['pt-BR', 'x-default']));
-    expect(langs).not.toEqual(expect.arrayContaining(['es', 'en']));
+    expect(langs).toEqual(['pt-BR', 'es', 'en', 'x-default']);
     expect(home.querySelector('[data-testid="fallback-notice"]')).toBeNull();
     expect(home.querySelector('[data-testid="locale-pt"]')?.getAttribute('aria-current')).toBe(
       'page',
