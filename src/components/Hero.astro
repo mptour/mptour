@@ -8,6 +8,7 @@ interface Props {
 
 const { dict } = Astro.props;
 const hero = await loadHeroImages();
+const base = import.meta.env.BASE_URL;
 ---
 
 <section class="hero" data-testid="hero">
@@ -29,6 +30,18 @@ const hero = await loadHeroImages();
         class="hero-still"
       />
     </picture>
+    <video
+      class="hero-clip"
+      data-hero-video
+      data-src-webm={`${base}media/hero.webm`}
+      data-src-mp4={`${base}media/hero.mp4`}
+      muted
+      loop
+      playsinline
+      autoplay
+      preload="none"
+      aria-hidden="true"
+    ></video>
   </div>
   <div class="hero-scrim"></div>
   <div class="hero-copy">

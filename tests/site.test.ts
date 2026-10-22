@@ -1,6 +1,6 @@
 // @vitest-environment happy-dom
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import { bindSite, shouldLoadHeroVideo } from '../src/scripts/site';
+import { bindSite, isSlowConnection, shouldLoadHeroVideo } from '../src/scripts/site';
 
 const fixture = `
   <header data-header>
@@ -17,6 +17,7 @@ function installView(flags: {
   reduce: boolean;
   wide: boolean;
   saveData?: boolean;
+  effectiveType?: string;
   scrollY?: number;
 }) {
   const view = window as Window & typeof globalThis;
@@ -42,7 +43,10 @@ function installView(flags: {
   });
   Object.defineProperty(view.navigator, 'connection', {
     configurable: true,
-    value: { saveData: Boolean(flags.saveData) },
+    value: {
+      saveData: Boolean(flags.saveData),
+      effectiveType: flags.effectiveType,
+    },
   });
   Object.defineProperty(view, 'scrollY', {
     configurable: true,
@@ -73,11 +77,19 @@ function installView(flags: {
 }
 
 describe('shouldLoadHeroVideo', () => {
-  it('loads only on a wide screen that is not saving data or reducing motion', () => {
+  it('loads only on a wide screen that is not saving data, reducing motion, or slow', () => {
     expect(shouldLoadHeroVideo({ reduce: false, wide: true, saveData: false })).toBe(true);
     expect(shouldLoadHeroVideo({ reduce: true, wide: true, saveData: false })).toBe(false);
     expect(shouldLoadHeroVideo({ reduce: false, wide: false, saveData: false })).toBe(false);
     expect(shouldLoadHeroVideo({ reduce: false, wide: true, saveData: true })).toBe(false);
+    expect(shouldLoadHeroVideo({ reduce: false, wide: true, saveData: false, slow: true })).toBe(
+      false,
+    );
+    expect(isSlowConnection('slow-2g')).toBe(true);
+    expect(isSlowConnection('2g')).toBe(true);
+    expect(isSlowConnection('3g')).toBe(true);
+    expect(isSlowConnection('4g')).toBe(false);
+    expect(isSlowConnection(undefined)).toBe(false);
   });
 });
 
@@ -85,6 +97,7 @@ describe('bindSite', () => {
   afterEach(() => {
     document.body.innerHTML = '';
     vi.restoreAllMocks();
+    Object.defineProperty(document, 'readyState', { configurable: true, value: 'complete' });
   });
 
   it('opens the menu, closes it from a link, and returns focus on Escape', () => {
@@ -145,5 +158,49 @@ describe('bindSite', () => {
     const saver = installView({ reduce: false, wide: true, saveData: true });
     bindSite(document, saver);
     expect(document.querySelector('[data-hero-video]')?.getAttribute('src')).toBeNull();
+  });
+
+  it('leaves the hero clip unloaded on a slow connection', () => {
+    for (const effectiveType of ['slow-2g', '2g', '3g']) {
+      document.body.innerHTML = fixture;
+      const view = installView({ reduce: false, wide: true, effectiveType });
+      bindSite(document, view);
+      const video = document.querySelector('[data-hero-video]');
+      expect(video?.getAttribute('src'), effectiveType).toBeNull();
+      expect(video?.querySelector('source'), effectiveType).toBeNull();
+    }
+  });
+
+  it('waits until the page has loaded before assigning the clip', () => {
+    document.body.innerHTML = fixture;
+    const view = installView({ reduce: false, wide: true, effectiveType: '4g' });
+    Object.defineProperty(document, 'readyState', { configurable: true, value: 'interactive' });
+    bindSite(document, view);
+    expect(document.querySelector('[data-hero-video]')?.getAttribute('src')).toBeNull();
+    view.dispatchEvent(new Event('load'));
+    expect(document.querySelector('[data-hero-video]')?.getAttribute('src') ?? '').toContain(
+      'clip.mp4',
+    );
+  });
+
+  it('attaches both formats and uses the hero photograph as the poster', () => {
+    document.body.innerHTML = `
+      <img class="hero-still" src="/assets/hero.jpg" />
+      <video data-hero-video data-src-webm="/media/hero.webm" data-src-mp4="/media/hero.mp4"></video>
+    `;
+    const still = document.querySelector<HTMLImageElement>('.hero-still');
+    Object.defineProperty(still, 'currentSrc', {
+      configurable: true,
+      value: '/assets/hero.jpg',
+    });
+    const view = installView({ reduce: false, wide: true, effectiveType: '4g' });
+    bindSite(document, view);
+    const video = document.querySelector<HTMLVideoElement>('[data-hero-video]');
+    expect(
+      [...(video?.querySelectorAll('source') ?? [])].map((node) => node.getAttribute('src')),
+    ).toEqual(['/media/hero.webm', '/media/hero.mp4']);
+    expect(video?.getAttribute('src')).toBeNull();
+    expect(video?.poster ?? '').toContain('/assets/hero.jpg');
+    expect(video?.muted).toBe(true);
   });
 });
