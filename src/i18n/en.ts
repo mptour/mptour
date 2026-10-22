@@ -91,8 +91,8 @@ export const en = {
       },
       {
         image: 'frontier',
-        name: ph('Mark of the Three Borders'),
-        label: ph('Mark'),
+        name: ph('Triple Frontier Landmark'),
+        label: ph('Triple Frontier'),
       },
     ],
   },

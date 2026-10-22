@@ -18,7 +18,7 @@ const MAP_POINTS = [
   { image: 'falls-ar', name: 'Falls on the Argentine side', label: 'Falls' },
   { image: 'itaipu', name: 'Itaipu', label: 'Itaipu' },
   { image: 'paraguay', name: 'Paraguay (Ciudad del Este)', label: 'Paraguay' },
-  { image: 'frontier', name: 'Mark of the Three Borders', label: 'Mark' },
+  { image: 'frontier', name: 'Triple Frontier Landmark', label: 'Triple Frontier' },
 ] as const;
 
 function readPage(outDir: string, page: string) {
