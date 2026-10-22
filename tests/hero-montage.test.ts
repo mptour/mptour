@@ -1,10 +1,10 @@
-import { execFileSync } from 'node:child_process';
 import { existsSync, readFileSync, statSync } from 'node:fs';
 import path from 'node:path';
 import { parse } from 'node-html-parser';
 import { describe, expect, it } from 'vitest';
 import { IMAGE_CREDITS } from '../src/assets/credits';
 import { HERO_NARROW_MEDIA, shouldLoadHeroVideo } from '../src/scripts/site';
+import { probeMedia as probe } from './media-probe';
 
 const rootDir = path.resolve(new URL('..', import.meta.url).pathname);
 const STOCK_HOST = /^https:\/\/(?:www\.)?(?:pexels\.com|pixabay\.com|mixkit\.co)\//;
@@ -17,44 +17,6 @@ const PLACES = [
     pattern: /tr[eê]s fronteiras|tres fronteiras|triple frontier/i,
   },
 ];
-
-interface Probe {
-  width: number;
-  height: number;
-  duration: number;
-  hasAudio: boolean;
-  codec: string;
-}
-
-function probe(file: string): Probe {
-  const raw = execFileSync(
-    'ffprobe',
-    [
-      '-v',
-      'error',
-      '-show_entries',
-      'stream=codec_type,codec_name,width,height',
-      '-show_entries',
-      'format=duration',
-      '-of',
-      'json',
-      file,
-    ],
-    { encoding: 'utf8' },
-  );
-  const parsed = JSON.parse(raw) as {
-    streams?: { codec_type?: string; codec_name?: string; width?: number; height?: number }[];
-    format?: { duration?: string };
-  };
-  const video = parsed.streams?.find((stream) => stream.codec_type === 'video');
-  return {
-    width: video?.width ?? 0,
-    height: video?.height ?? 0,
-    duration: Number(parsed.format?.duration ?? 0),
-    hasAudio: parsed.streams?.some((stream) => stream.codec_type === 'audio') ?? false,
-    codec: video?.codec_name ?? '',
-  };
-}
 
 describe('Foz hero montage', () => {
   it('credits each free-license clip on /creditos/ and keeps the photographs', () => {
