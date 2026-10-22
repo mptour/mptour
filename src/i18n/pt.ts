@@ -4,14 +4,14 @@ export const pt = {
   meta: {
     title: ph('MPTour — passeios em Foz do Iguaçu'),
     description: ph(
-      'PLACEHOLDER. Em Foz, você vê as Cataratas dos dois lados, ouve a água, passa em Itaipu e atravessa pro Paraguai.',
+      'Em Foz, você vê as Cataratas dos dois lados, ouve a água, passa em Itaipu e atravessa pro Paraguai.',
     ),
   },
   nav: {
     territories: ph('Os lugares'),
     experiences: ph('Os passeios'),
     method: ph('Como funciona'),
-    cta: ph('Chama no WhatsApp'),
+    cta: ph('Chame no WhatsApp'),
   },
   hero: {
     eyebrow: ph('Foz do Iguaçu'),
@@ -20,7 +20,7 @@ export const pt = {
     lede: ph(
       'A gente leva você nas Cataratas, do lado brasileiro e do argentino. Itaipu e o Paraguai também. A gente vai no seu tempo.',
     ),
-    cta: ph('Chama no WhatsApp'),
+    cta: ph('Chame no WhatsApp'),
     secondary: ph('Ver os passeios'),
     pause: ph('Pausar vídeo'),
     play: ph('Tocar vídeo'),
@@ -76,9 +76,9 @@ export const pt = {
   regionMap: {
     title: ph('Onde fica cada lugar'),
     idleMeta: ph('Cinco lugares'),
-    idleTitle: ph('Escolhe um lugar.'),
+    idleTitle: ph('Escolha um lugar.'),
     idleText: ph('Tudo fica entre o rio Paraná e o Iguaçu.'),
-    link: ph('Olha esse lugar'),
+    link: ph('Olhe esse lugar'),
     countries: {
       br: ph('Brasil'),
       ar: ph('Argentina'),
@@ -103,36 +103,38 @@ export const pt = {
   experiences: {
     kicker: ph('Passeios'),
     title: ph('O que cabe no seu dia.'),
-    lede: ph('Você diz quem vai e o que quer ver. A gente monta o resto.'),
+    lede: ph(
+      'Você diz quem vai e o que quer ver. Meio dia, dia inteiro, vários dias ou sob medida.',
+    ),
     items: [
       {
         title: ph('San Martín com calma'),
         territory: ph('Cataratas · Argentina'),
-        duration: ph('Dia inteiro'),
+        duration: ph('Do jeito que você quiser'),
         image: 'exp-san-martin',
       },
       {
         title: ph('A passarela brasileira'),
         territory: ph('Cataratas · Brasil'),
-        duration: ph('Meio dia'),
+        duration: ph('Do jeito que você quiser'),
         image: 'exp-walkway',
       },
       {
         title: ph('Itaipu de perto'),
         territory: ph('Itaipu'),
-        duration: ph('Meio dia'),
+        duration: ph('Do jeito que você quiser'),
         image: 'exp-itaipu',
       },
       {
         title: ph('A ponte pro Paraguai'),
         territory: ph('Paraguai'),
-        duration: ph('Meio dia'),
+        duration: ph('Do jeito que você quiser'),
         image: 'exp-bridge',
       },
       {
-        title: ph('Brasil num dia, Argentina no outro'),
+        title: ph('Brasil de um lado, Argentina do outro'),
         territory: ph('Cataratas'),
-        duration: ph('Dois dias'),
+        duration: ph('Do jeito que você quiser'),
         image: 'exp-curtain',
       },
     ],
@@ -157,14 +159,14 @@ export const pt = {
   },
   plan: {
     kicker: ph('WhatsApp'),
-    title: ph('Manda um oi. A gente responde daqui.'),
-    text: ph('Pode escrever em português, español ou English.'),
-    cta: ph('Chama a gente no WhatsApp'),
+    title: ph('Mande um oi. A gente responde daqui.'),
+    text: ph('Pode escrever em português, espanhol ou English.'),
+    cta: ph('Chame a gente no WhatsApp'),
     note: ph('Mandar mensagem ainda não é reserva. A gente combina tudo por lá.'),
   },
   footer: {
     place: ph('Foz do Iguaçu · Paraná · Brasil'),
-    legal: ph('Os textos e as fotos ainda são PLACEHOLDER. O número acima é o nosso WhatsApp.'),
+    legal: ph('As fotos ainda são provisórias. O número acima é o nosso WhatsApp.'),
     credits: ph('Créditos das fotos'),
   },
   credits: {
@@ -174,7 +176,7 @@ export const pt = {
   missing: {
     kicker: ph('404'),
     title: ph('Não existe.'),
-    text: ph('PLACEHOLDER. Esse endereço não leva a lugar nenhum.'),
-    link: ph('Volta pro começo'),
+    text: ph('Esse endereço não leva a lugar nenhum.'),
+    link: ph('Volte pro começo'),
   },
 } satisfies Dictionary;

@@ -69,12 +69,37 @@ describe('copy', () => {
     }
   });
 
-  it('invites the tourist to call on WhatsApp, in the você form', () => {
+  it('invites the tourist to call on WhatsApp, in the formal você imperative', () => {
     const copy = collectCopy(pt).join('\n');
-    expect(pt.plan.cta.text).toBe('Chama a gente no WhatsApp');
-    expect(pt.hero.cta.text).toMatch(/whatsapp/i);
-    expect(pt.nav.cta.text).toMatch(/whatsapp/i);
+    expect(pt.plan.cta.text).toBe('Chame a gente no WhatsApp');
+    expect(pt.hero.cta.text).toBe('Chame no WhatsApp');
+    expect(pt.nav.cta.text).toBe('Chame no WhatsApp');
+    expect(pt.plan.title.text).toBe('Mande um oi. A gente responde daqui.');
+    expect(pt.missing.link.text).toBe('Volte pro começo');
+    expect(pt.plan.text.text).toContain('espanhol');
+    expect(copy).not.toMatch(/español/);
+    expect(copy).not.toMatch(/PLACEHOLDER/);
+    expect(copy).not.toMatch(/\bChama\b|\bManda\b|\bEscolhe\b|\bOlha\b|\bVolta\b/);
     expect(copy).toMatch(/você/i);
+  });
+
+  it('keeps the confirmed guide facts and leaves duration flexible', () => {
+    expect(pt.manifesto.facts.map((fact) => fact.text)).toEqual([
+      'Passeio particular',
+      'Guia que mora em Foz',
+      'Brasil, Argentina, Paraguai',
+    ]);
+    expect(pt.experiences.lede.text).toContain('Meio dia, dia inteiro, vários dias ou sob medida.');
+    expect(pt.experiences.items.map((item) => item.duration.text)).toEqual([
+      'Do jeito que você quiser',
+      'Do jeito que você quiser',
+      'Do jeito que você quiser',
+      'Do jeito que você quiser',
+      'Do jeito que você quiser',
+    ]);
+    expect(pt.experiences.items.map((item) => item.title.text).join('\n')).not.toMatch(
+      /num dia|dois dias|dia inteiro|meio dia/i,
+    );
   });
 
   it('rewrites the map prompt and keeps the region names', () => {
@@ -99,8 +124,9 @@ describe('copy', () => {
       pt.regionMap.idleText.text,
       pt.regionMap.link.text,
     ].join('\n');
+    expect(pt.regionMap.idleTitle.text).toBe('Escolha um lugar.');
+    expect(pt.regionMap.link.text).toBe('Olhe esse lugar');
     expect(prompt).not.toMatch(/ver território/i);
     expect(prompt).not.toMatch(/toque um ponto/i);
-    expect(prompt).not.toMatch(/escolha um lugar/i);
   });
 });

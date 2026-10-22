@@ -18,7 +18,7 @@ describe('home', () => {
     expect(heading?.text.trim().length ?? 0).toBeGreaterThan(0);
 
     const cta = heroes[0]?.querySelector('[data-testid="cta-primary"]');
-    expect(cta?.text.trim()).toBe('Chama no WhatsApp');
+    expect(cta?.text.trim()).toBe('Chame no WhatsApp');
     expect(cta?.getAttribute('href')).toBe('#monte-seu-roteiro');
 
     const plan = root.querySelector('#monte-seu-roteiro');

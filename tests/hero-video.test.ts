@@ -78,7 +78,9 @@ describe('hero video', () => {
     const still = hero?.querySelector('img');
     expect(still?.getAttribute('fetchpriority')).toBe('high');
     expect(still?.getAttribute('loading')).toBe('eager');
-    expect(still?.getAttribute('alt') ?? '').toMatch(/^PLACEHOLDER/);
+    const alt = still?.getAttribute('alt') ?? '';
+    expect(alt).toMatch(/Garganta do Diabo/);
+    expect(alt).not.toMatch(/PLACEHOLDER/);
 
     const mp4 = video?.getAttribute('data-src-mp4') ?? '';
     const webm = video?.getAttribute('data-src-webm') ?? '';
