@@ -50,4 +50,4 @@ A navegação aponta para `/#territorios`, `/#experiencias`, `/#como-funciona` e
 
 ## Fotografias
 
-Arquivos provisórios do Wikimedia Commons, um por uso: o mosaico e os cards não repetem a mesma foto. Os créditos ficam em `/creditos/`, fora do rodapé. O alt continua marcado com `PLACEHOLDER`. O hero é uma foto grande da Garganta do Diabo, sem clipe de 1280×720. Trocar a mídia é substituir os arquivos em `src/assets/` e `public/og.jpg`.
+Arquivos provisórios do Wikimedia Commons, um por uso: o mosaico e os cards não repetem a mesma foto. Os créditos ficam em `/creditos/`, fora do rodapé. O hero continua uma foto grande da Garganta do Diabo. Por cima, quem aceita movimento vê um clipe mudo: 1280×720 nas telas largas e um corte 720×1280 abaixo de 840px. Os arquivos estão em `public/media/` e os créditos em `/creditos/`. Trocar a foto é substituir os arquivos em `src/assets/` e `public/og.jpg`.
