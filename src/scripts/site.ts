@@ -1,11 +1,53 @@
 type View = Window & typeof globalThis;
 
+type NetInfo = { saveData?: boolean; effectiveType?: string };
+
+const SLOW_CONNECTIONS = new Set(['slow-2g', '2g', '3g']);
+
+export function isSlowConnection(effectiveType: string | undefined): boolean {
+  return typeof effectiveType === 'string' && SLOW_CONNECTIONS.has(effectiveType);
+}
+
 export function shouldLoadHeroVideo(input: {
   reduce: boolean;
   wide: boolean;
   saveData: boolean;
+  slow?: boolean;
 }): boolean {
-  return !input.reduce && input.wide && !input.saveData;
+  return !input.reduce && input.wide && !input.saveData && !input.slow;
+}
+
+function videoSource(doc: Document, src: string, type: string): HTMLSourceElement {
+  const node = doc.createElement('source');
+  node.src = src;
+  node.type = type;
+  return node;
+}
+
+function reflectPlayback(video: HTMLVideoElement, button: HTMLButtonElement): void {
+  const paused = video.paused;
+  button.hidden = false;
+  button.textContent = paused
+    ? (button.dataset.labelPlay ?? 'Tocar vídeo')
+    : (button.dataset.labelPause ?? 'Pausar vídeo');
+  button.setAttribute('aria-pressed', paused ? 'true' : 'false');
+}
+
+function bindPlayback(video: HTMLVideoElement, button: HTMLButtonElement | null): void {
+  if (!button || button.dataset.bound === 'true') return;
+  button.dataset.bound = 'true';
+  const reflect = () => reflectPlayback(video, button);
+  button.addEventListener('click', () => {
+    if (video.paused) {
+      const pending = video.play?.();
+      void pending?.catch?.(() => reflect());
+      return;
+    }
+    video.pause();
+  });
+  video.addEventListener('play', reflect);
+  video.addEventListener('pause', reflect);
+  reflect();
 }
 
 export function bindSite(doc: Document, view: View): void {
@@ -45,24 +87,52 @@ export function bindSite(doc: Document, view: View): void {
 
   const reduce = view.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const wide = view.matchMedia('(min-width: 1100px)').matches;
-  const connection = (view.navigator as Navigator & { connection?: { saveData?: boolean } })
-    .connection;
+  const connection = (view.navigator as Navigator & { connection?: NetInfo }).connection;
   const video = doc.querySelector<HTMLVideoElement>('[data-hero-video]');
 
-  if (video && shouldLoadHeroVideo({ reduce, wide, saveData: Boolean(connection?.saveData) })) {
+  if (
+    video &&
+    shouldLoadHeroVideo({
+      reduce,
+      wide,
+      saveData: Boolean(connection?.saveData),
+      slow: isSlowConnection(connection?.effectiveType),
+    })
+  ) {
     const start = () => {
-      const src = video.dataset.src;
-      if (!src) return;
+      const webm = video.dataset.srcWebm;
+      const mp4 = video.dataset.srcMp4;
+      const single = video.dataset.src;
+      if (!webm && !mp4 && !single) return;
+
+      const still = doc.querySelector<HTMLImageElement>('.hero-still');
+      const poster = still?.currentSrc || still?.getAttribute('src');
+      if (poster) video.poster = poster;
+
+      video.muted = true;
       video.addEventListener('playing', () => video.classList.add('is-playing'), { once: true });
-      video.src = src;
+      bindPlayback(video, doc.querySelector<HTMLButtonElement>('[data-hero-playback]'));
+
+      if (webm || mp4) {
+        if (webm) video.append(videoSource(doc, webm, 'video/webm'));
+        if (mp4) video.append(videoSource(doc, mp4, 'video/mp4'));
+        video.load?.();
+      } else if (single) {
+        video.src = single;
+      }
+
       const pending = video.play?.();
       void pending?.catch?.(() => undefined);
     };
-    if (typeof view.requestIdleCallback === 'function') {
-      view.requestIdleCallback(start, { timeout: 2000 });
-    } else {
-      view.setTimeout(start, 0);
-    }
+    const idle = () => {
+      if (typeof view.requestIdleCallback === 'function') {
+        view.requestIdleCallback(start, { timeout: 2000 });
+      } else {
+        view.setTimeout(start, 0);
+      }
+    };
+    if (doc.readyState === 'complete') idle();
+    else view.addEventListener('load', idle, { once: true });
   }
 
   if (!reduce) {

@@ -241,6 +241,7 @@ describe('home contrast', () => {
     const cream = mustColor(resolveColor(vars['--cream']), 'cream');
     const plate = mustColor(resolveColor(vars['--plate']), 'plate');
     pair('hero cream on the plate over white', cream, flatten(plate));
+    pair('hero playback control', ink('.hero-playback', cream), backdrop(['.hero', '.hero-copy']));
   });
 
   it('meets AA on the region map lands and the tour card', () => {
