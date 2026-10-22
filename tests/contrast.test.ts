@@ -242,4 +242,35 @@ describe('home contrast', () => {
     const plate = mustColor(resolveColor(vars['--plate']), 'plate');
     pair('hero cream on the plate over white', cream, flatten(plate));
   });
+
+  it('meets AA on the region map lands and the tour card', () => {
+    function paintPair(name: string, selector: string) {
+      const node = painted(selector);
+      pair(name, mustColor(node.color, name), mustColor(node.background, `${name} background`));
+    }
+
+    paintPair('map label', '.map-label');
+    paintPair('map label on brazil', ".map-pin[data-land='br'] .map-label");
+    paintPair('map label on argentina', ".map-pin[data-land='ar'] .map-label");
+    paintPair('map label on paraguay', ".map-pin[data-land='py'] .map-label");
+    paintPair('country label', '.map-country');
+    paintPair('country label on brazil', ".map-country[data-land='br']");
+    paintPair('country label on argentina', ".map-country[data-land='ar']");
+    paintPair('country label on paraguay', ".map-country[data-land='py']");
+
+    const selected = mustColor(
+      painted(".map-pin[aria-current='true'] .map-label").color,
+      'selected map label',
+    );
+    for (const land of ['--land-br', '--land-ar', '--land-py'] as const) {
+      pair(`selected map label on ${land}`, selected, mustColor(resolveColor(vars[land]), land));
+    }
+
+    const panel = backdrop(['.map-panel']);
+    const panelInk = ink('.map-panel', paper);
+    pair('map card title', ink('.map-card h3', panelInk), panel);
+    pair('map meta', ink('.map-panel .meta', panelInk), panel);
+    pair('map copy', ink('.map-copy', panelInk), panel);
+    pair('map link', ink('.map-link', panelInk), panel);
+  });
 });

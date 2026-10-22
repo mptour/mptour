@@ -74,7 +74,10 @@ function expectMap(outDir: string, page: string, homePath: string) {
     const pin = pins.find((node) => node.getAttribute('data-pin') === tour.image);
     expect(pin, tour.name).toBeTruthy();
     expect(pin?.tagName.toLowerCase()).toBe('a');
-    expect(pin?.getAttribute('aria-label'), 'visible label must be the accessible name').toBeNull();
+    expect(
+      pin?.getAttribute('aria-label'),
+      'visible label must be the accessible name',
+    ).toBeFalsy();
     expect(pin?.getAttribute('href')).toBe(`#${tour.card}`);
     expect(pin?.text).toContain(tour.name);
 

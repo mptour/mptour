@@ -69,6 +69,33 @@ export const pt = {
       },
     ],
   },
+  regionMap: {
+    title: ph('Mapa da região'),
+    idleMeta: ph('Cinco pontos'),
+    idleTitle: ph('Escolha um lugar.'),
+    idleText: ph('Toque um ponto entre o Paraná e o Iguaçu.'),
+    link: ph('Ver território'),
+    countries: {
+      br: ph('Brasil'),
+      ar: ph('Argentina'),
+      py: ph('Paraguai'),
+    },
+    points: [
+      { image: 'falls-br', name: ph('Cataratas lado brasileiro'), label: ph('Cataratas') },
+      { image: 'falls-ar', name: ph('Cataratas lado argentino'), label: ph('Cataratas') },
+      { image: 'itaipu', name: ph('Itaipu'), label: ph('Itaipu') },
+      {
+        image: 'paraguay',
+        name: ph('Paraguai (Ciudad del Este)'),
+        label: ph('Paraguai'),
+      },
+      {
+        image: 'frontier',
+        name: ph('Marco das Três Fronteiras'),
+        label: ph('Marco'),
+      },
+    ],
+  },
   experiences: {
     kicker: ph('Experiências'),
     title: ph('O que um dia pode ser.'),
