@@ -74,6 +74,33 @@ describe('copy', () => {
     expect(pt.plan.cta.text).toBe('Chama a gente no WhatsApp');
     expect(pt.hero.cta.text).toMatch(/whatsapp/i);
     expect(pt.nav.cta.text).toMatch(/whatsapp/i);
-    expect(copy).toMatch(/\bvocê\b/i);
+    expect(copy).toMatch(/você/i);
+  });
+
+  it('rewrites the map prompt and keeps the region names', () => {
+    expect(pt.regionMap.points.map((point) => point.name.text)).toEqual([
+      'Cataratas lado brasileiro',
+      'Cataratas lado argentino',
+      'Itaipu',
+      'Paraguai (Ciudad del Este)',
+      'Marco das Três Fronteiras',
+    ]);
+    expect(pt.regionMap.countries.br.text).toBe('Brasil');
+    expect(pt.regionMap.countries.ar.text).toBe('Argentina');
+    expect(pt.regionMap.countries.py.text).toBe('Paraguai');
+    for (const point of pt.regionMap.points) {
+      expect(point.name.text.startsWith(point.label.text), point.name.text).toBe(true);
+    }
+
+    const prompt = [
+      pt.regionMap.title.text,
+      pt.regionMap.idleMeta.text,
+      pt.regionMap.idleTitle.text,
+      pt.regionMap.idleText.text,
+      pt.regionMap.link.text,
+    ].join('\n');
+    expect(prompt).not.toMatch(/ver território/i);
+    expect(prompt).not.toMatch(/toque um ponto/i);
+    expect(prompt).not.toMatch(/escolha um lugar/i);
   });
 });

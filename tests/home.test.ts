@@ -7,7 +7,7 @@ const html = readFileSync(new URL('../dist/index.html', import.meta.url), 'utf8'
 const root = parse(html);
 
 describe('home', () => {
-  it('renders the cinematic hero and the Monte seu roteiro CTA', () => {
+  it('renders the cinematic hero and a WhatsApp CTA', () => {
     expect(root.querySelector('html')?.getAttribute('lang')).toBe('pt-BR');
 
     const heroes = root.querySelectorAll('[data-testid="hero"]');
@@ -18,7 +18,7 @@ describe('home', () => {
     expect(heading?.text.trim().length ?? 0).toBeGreaterThan(0);
 
     const cta = heroes[0]?.querySelector('[data-testid="cta-primary"]');
-    expect(cta?.text.trim()).toBe('Monte seu roteiro');
+    expect(cta?.text.trim()).toBe('Chama no WhatsApp');
     expect(cta?.getAttribute('href')).toBe('#monte-seu-roteiro');
 
     const plan = root.querySelector('#monte-seu-roteiro');
