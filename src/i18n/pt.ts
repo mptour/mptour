@@ -166,7 +166,7 @@ export const pt = {
   },
   footer: {
     place: ph('Foz do Iguaçu · Paraná · Brasil'),
-    legal: ph('As fotos ainda são provisórias. O número acima é o nosso WhatsApp.'),
+    legal: ph('As fotos e os vídeos ainda são provisórios. O número acima é o nosso WhatsApp.'),
     credits: ph('Créditos das fotos e dos vídeos'),
   },
   credits: {
