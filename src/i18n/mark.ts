@@ -51,6 +51,8 @@ export interface Dictionary {
     lede: Copy;
     cta: Copy;
     secondary: Copy;
+    pause: Copy;
+    play: Copy;
   };
   manifesto: { kicker: Copy; quote: Copy; facts: Copy[] };
   territories: { kicker: Copy; title: Copy; lede: Copy; items: Territory[] };

@@ -22,6 +22,8 @@ export const pt = {
     ),
     cta: ph('Chama no WhatsApp'),
     secondary: ph('Ver os passeios'),
+    pause: ph('Pausar vídeo'),
+    play: ph('Tocar vídeo'),
   },
   manifesto: {
     kicker: ph('Quem leva'),
